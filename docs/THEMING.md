@@ -24,6 +24,22 @@ client-side theme flicker. Everything here is admin-editable from the **Appearan
   tinted from the accent or a neutral, all driven by a single `--pattern-opacity` variable (0–100%, default 6%).
 - Rendered in a `position: fixed`, `pointer-events: none` layer; simplified on low-power devices.
 
+## Fonts & text colour (per-area, product-owner request)
+
+Font choice is **not** a single global pair. The admin can assign a **different font and a different text
+colour to each area** of the site — `headings`, `body`, `nav`, `buttons`, `hero`, and `accents`. A global pair
+provides the default; any per-area override wins over it. Stored in `theme_settings.font_overrides` (jsonb)
+plus base `heading_color` / `body_color`, and injected as scoped CSS variables so a change re-styles just that
+area with no flash. All 8 curated font families remain self-hosted via `next/font` (no external font CDN);
+custom text colours run through the same WCAG contrast checker as accents.
+
+## Demo content (seed)
+
+A fresh install seeds real demo content so the site looks alive before the studio adds their own: hero
+**carousel demo images** and a **demo video**, demo project galleries, members, testimonials, and client logos.
+Everything is stored as ordinary `media_assets` / `hero_slides` / project rows, so the admin **replaces every
+demo image and the demo video from the panel** — nothing is hardcoded in components.
+
 ## Premium controls
 
 Font pairing (8 curated, self-hosted via `next/font`), corner radius, density, grain overlay, glass surfaces,
