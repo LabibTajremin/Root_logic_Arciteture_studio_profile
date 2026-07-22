@@ -59,6 +59,26 @@ async function main() {
     console.log(`Admin ${adminEmail} already exists — skipping`);
   }
 
+  // A demo editor so RBAC (and the verification workflow) can be exercised end-to-end.
+  const editorEmail = process.env.EDITOR_EMAIL ?? 'editor@example.com';
+  const editorExists = await db.query.users.findFirst({
+    where: eq(schema.users.email, editorEmail),
+  });
+  if (!editorExists) {
+    const editorHash = await hash(process.env.EDITOR_PASSWORD ?? 'editor-password', {
+      algorithm: 2,
+    });
+    await db.insert(schema.users).values({
+      tenantId: DEMO_TENANT_ID,
+      email: editorEmail,
+      passwordHash: editorHash,
+      role: 'editor',
+      name: 'Demo Editor',
+      isActive: true,
+    });
+    console.log(`Created editor ${editorEmail}`);
+  }
+
   // ── settings ────────────────────────────────────────────────────────────────
   await db
     .insert(schema.siteSettings)

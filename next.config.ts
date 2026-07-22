@@ -7,9 +7,8 @@ const nextConfig: NextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
   },
-  experimental: {
-    typedRoutes: true,
-  },
+  // typedRoutes is re-enabled in the admin phase once every route exists; enabling it
+  // now would reject links to pages built in later phases.
 };
 
 export default nextConfig;
