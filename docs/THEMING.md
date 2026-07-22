@@ -13,6 +13,11 @@ client-side theme flicker. Everything here is admin-editable from the **Appearan
 - **Custom hex** picker with a live contrast checker that blocks unreadable choices.
 - Dark / light mode with a tiny inline script + cookie to avoid FOUC.
 
+> **Default light-mode base (product owner preference):** light mode is **not** solid white. The default
+> surface is a premium warm off-white / cream (`~#faf6f1`), paired with a **muted crimson** accent — refined,
+> not bold. The default preset (Editorial Warm) ships these values; studios can still switch to any accent or a
+> pure-white surface if they want.
+
 ## Background patterns
 
 - **22 pure CSS/SVG patterns** (Fine Grid, Blueprint, Dot Matrix, Terrazzo, Marble Veins, Art Deco Fan…),
