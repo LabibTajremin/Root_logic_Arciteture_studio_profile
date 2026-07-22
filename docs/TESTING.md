@@ -14,12 +14,16 @@ committed.
 ## Running locally
 
 ```bash
-pnpm test            # unit + integration (Vitest)
-pnpm test:coverage   # with V8 coverage report (html + lcov)
-pnpm test:e2e        # Playwright (needs the app running or uses its webServer)
+pnpm test              # unit tests (Vitest, no DB needed)
+pnpm test:integration  # integration tests against a real Postgres (reads DATABASE_URL)
+pnpm test:coverage     # unit tests with V8 coverage report (html + lcov)
+pnpm test:e2e          # Playwright (needs the app running or uses its webServer)
 ```
 
-Integration tests that need Postgres read `DATABASE_URL`; start one with `docker compose up -d db`.
+Integration tests need Postgres: start one with `docker compose up -d db` (or any Postgres) and set
+`DATABASE_URL`. The integration config loads `.env` automatically and applies migrations in a global setup
+before the suite runs. They run serially against one shared database and each test isolates itself with its own
+tenant rows, so the cross-tenant isolation checks are deterministic.
 
 ## CI (test before merge)
 
@@ -27,8 +31,10 @@ Integration tests that need Postgres read `DATABASE_URL`; start one with `docker
 merge until green:
 
 1. **verify** — `pnpm lint` (incl. the layer-boundary rule) → `pnpm typecheck` → `pnpm format:check` →
-   `pnpm test`.
-2. **build** — `pnpm build` (runs only after `verify` passes).
+   `pnpm test` (unit).
+2. **integration** — spins up a Postgres service, runs `pnpm db:migrate`, then `pnpm test:integration`
+   (repositories, Unit of Work, cross-tenant isolation). Runs after `verify`.
+3. **build** — `pnpm build` (runs only after `verify` passes).
 
 Make CI a required status check on `main` in the repository's branch-protection settings so a red build can
 never be merged.
