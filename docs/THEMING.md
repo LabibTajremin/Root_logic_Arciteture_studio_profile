@@ -33,6 +33,25 @@ plus base `heading_color` / `body_color`, and injected as scoped CSS variables s
 area with no flash. All 8 curated font families remain self-hosted via `next/font` (no external font CDN);
 custom text colours run through the same WCAG contrast checker as accents.
 
+## Media aspect-ratio guidance (product-owner request)
+
+Every upload field shows the **expected aspect ratio and recommended pixel dimensions** as inline helper text
+so the admin uploads correctly-proportioned media (no awkward crops). Defaults, all admin-configurable in
+**Settings → Media**:
+
+| Context                 | Default ratio                                 | Recommended                 |
+| ----------------------- | --------------------------------------------- | --------------------------- |
+| Hero image              | 16:9 (or 21:9 cinematic)                      | ≥ 2400×1350                 |
+| Hero / background video | 16:9                                          | 1920×1080, H.264/HLS, muted |
+| Project cover           | 4:5 (portrait)                                | ≥ 1200×1500                 |
+| Project gallery         | project's grid ratio (4:5 / 1:1 / 3:2 / 16:9) | ≥ 1600 on long edge         |
+| Member photo            | 3:4                                           | ≥ 900×1200                  |
+| Client / award logo     | free, transparent PNG/SVG                     | height ≥ 200                |
+| OG / social image       | 1.91:1                                        | 1200×630                    |
+
+The chosen grid ratio drives both the public layout (`object-fit: cover` + focal point) and the helper note
+shown at upload time, so the guidance always matches what the site will render.
+
 ## Demo content (seed)
 
 A fresh install seeds real demo content so the site looks alive before the studio adds their own: hero
