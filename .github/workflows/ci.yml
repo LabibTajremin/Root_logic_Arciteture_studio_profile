@@ -59,8 +59,23 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
+      minio:
+        image: bitnami/minio:latest
+        env:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+          MINIO_DEFAULT_BUCKETS: mapkathi-test
+        ports:
+          - 9000:9000
     env:
       DATABASE_URL: postgres://mapkathi:mapkathi@localhost:5432/mapkathi
+      # S3 contract runs against MinIO (local + S3 in CI; remote drivers stay flagged).
+      RUN_S3_CONTRACT: '1'
+      S3_ENDPOINT: http://localhost:9000
+      S3_REGION: us-east-1
+      S3_BUCKET: mapkathi-test
+      S3_ACCESS_KEY_ID: minioadmin
+      S3_SECRET_ACCESS_KEY: minioadmin
     steps:
       - uses: actions/checkout@v4
 
@@ -76,10 +91,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Wait for MinIO
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:9000/minio/health/live; then echo "minio ready"; exit 0; fi
+            sleep 2
+          done
+          echo "minio did not become ready" && exit 1
+
       - name: Run migrations
         run: pnpm db:migrate
 
-      - name: Integration tests
+      - name: Integration tests (incl. S3 contract)
         run: pnpm test:integration
 
   build:

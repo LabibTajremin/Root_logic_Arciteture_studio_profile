@@ -43,5 +43,8 @@ never be merged.
 
 - Domain and application layers: aim for full branch coverage — these are pure and cheap to test.
 - Every use case has at least one authorisation-failure test (e.g. an editor cannot call `PublishProject`).
-- Every storage adapter passes the same contract suite.
+- Every storage adapter passes the same contract suite (`tests/support/storageContract.ts`): the Local adapter
+  runs in the unit suite on every push; the S3 adapter runs against MinIO in CI (`RUN_S3_CONTRACT=1`); the
+  remote drivers (R2/Supabase/Bunny/Drive) share the same adapter shape and are exercised behind their own
+  flags with real credentials.
 - Cross-tenant isolation has a dedicated integration test proving a tenant cannot read another's rows.
