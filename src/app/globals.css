@@ -6,10 +6,28 @@
   --foreground: #1a1614;
   --accent: #8f2d3b;
   --accent-foreground: #faf6f1;
+
+  /* Motion engine defaults (overridden per-tenant by ThemeStyle; see motion.ts). */
+  --motion-duration: 600ms;
+  --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-distance: 12px;
+  --motion-stagger: 70ms;
+  --parallax-intensity: 0.2;
+
+  --radius: 6px;
+  --font-headings: Georgia, serif;
+  --font-body: system-ui, sans-serif;
+}
+
+:root[data-theme='dark'] {
+  --background: #0d0b0a;
+  --foreground: #f2ece6;
+  --accent: #c04a57;
+  --accent-foreground: #0d0b0a;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --background: #0d0b0a;
     --foreground: #f2ece6;
     --accent: #c04a57;
@@ -27,5 +45,53 @@
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-headings);
+  color: var(--heading-color, inherit);
+}
+
+/* ── Scroll-reveal base (reads motion vars; JS adds .is-in when in view) ──────── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(var(--motion-distance));
+  transition:
+    opacity var(--motion-duration) var(--motion-ease),
+    transform var(--motion-duration) var(--motion-ease);
+  will-change: opacity, transform;
+}
+[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+/* If JS never runs, content must still be visible — never trapped at opacity:0. */
+.no-js [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+/*
+ * Guardrail (§7.4.3): a viewer who prefers reduced motion always wins over every admin
+ * setting — collapse all motion to instant with zero travel. Cannot be overridden.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration: 0ms !important;
+    --motion-distance: 0px !important;
+    --motion-stagger: 0ms !important;
+    --parallax-intensity: 0 !important;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }

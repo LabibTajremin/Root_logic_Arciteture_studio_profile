@@ -45,6 +45,23 @@ export interface ThemeSettings {
   readonly grain: boolean;
   readonly glass: boolean;
   readonly heroStyle: string;
+  // Motion engine (§7.4) — all admin-controlled, injected as CSS vars.
+  readonly motionPreset: string;
+  readonly scrollRevealStyle: string;
+  readonly heroAnimation: string;
+  readonly imageHoverStyle: string;
+  readonly cardHoverStyle: string;
+  readonly pageTransition: string;
+  readonly textRevealStyle: string;
+  readonly cursorStyle: string;
+  readonly loaderStyle: string;
+  readonly scrollProgress: boolean;
+  readonly smoothScroll: boolean;
+  readonly parallaxIntensity: number;
+  readonly motionSpeed: number;
+  readonly staggerMs: number;
+  readonly animateOnce: boolean;
+  readonly motionOnMobile: string;
 }
 
 export interface SeoSettings {
