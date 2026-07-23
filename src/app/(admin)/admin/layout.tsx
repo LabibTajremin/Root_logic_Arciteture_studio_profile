@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 const NAV: { href: string; label: string; adminOnly?: boolean }[] = [
   { href: '/admin', label: 'Dashboard' },
   { href: '/admin/projects', label: 'Projects' },
+  { href: '/admin/hero', label: 'Hero', adminOnly: true },
   { href: '/admin/approvals', label: 'Approvals', adminOnly: true },
   { href: '/admin/users', label: 'Users', adminOnly: true },
   { href: '/admin/appearance', label: 'Appearance' },
