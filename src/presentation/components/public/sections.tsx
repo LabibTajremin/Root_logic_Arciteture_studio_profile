@@ -175,6 +175,114 @@ export function Testimonials({
   );
 }
 
+export function ClientLogoWall({ clients }: { clients: { id: string; name: string }[] }) {
+  if (!clients.length) return null;
+  return (
+    <section className="border-y border-current/10">
+      <div className="mx-auto max-w-6xl px-4 py-12 md:px-6">
+        <p className="mb-6 text-center text-xs uppercase tracking-[0.2em] opacity-50">Trusted by</p>
+        <div className="grid grid-cols-2 items-center gap-6 sm:grid-cols-3 md:grid-cols-6">
+          {clients.map((c) => (
+            <div
+              key={c.id}
+              className="flex h-14 items-center justify-center rounded-md border border-current/10 text-sm opacity-60 transition-opacity hover:opacity-100"
+            >
+              {c.name}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function PortfolioCategories({
+  categories,
+}: {
+  categories: { id: string; name: string; slug: string }[];
+}) {
+  if (!categories.length) return null;
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
+      <SectionHeading eyebrow="Explore" title="Portfolio" />
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {categories.map((cat, i) => (
+          <Reveal key={cat.id} delayIndex={i % 3}>
+            <Link
+              href={`/work`}
+              className="group relative flex aspect-[4/3] flex-col justify-between overflow-hidden rounded-[var(--radius)] border border-current/10 p-6"
+            >
+              <span className="text-sm opacity-40">{String(i + 1).padStart(2, '0')}</span>
+              <span
+                className="text-2xl font-medium tracking-tight"
+                style={{ fontFamily: 'var(--font-headings)' }}
+              >
+                {cat.name}
+              </span>
+              <span
+                className="absolute inset-0 -z-10 bg-[var(--accent)] opacity-0 transition-opacity group-hover:opacity-10"
+                aria-hidden
+              />
+            </Link>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function CoreValues({
+  values,
+}: {
+  values: { id: string; title: string; body: string | null }[];
+}) {
+  if (!values.length) return null;
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
+      <SectionHeading eyebrow="How we work" title="Our values" />
+      <ol className="grid grid-cols-1 gap-x-10 gap-y-8 sm:grid-cols-2">
+        {values.map((v, i) => (
+          <Reveal key={v.id} as="li" delayIndex={i % 2}>
+            <div className="flex gap-4">
+              <span className="text-sm opacity-40">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3 className="text-lg font-medium">{v.title}</h3>
+                {v.body && <p className="mt-1 opacity-70">{v.body}</p>}
+              </div>
+            </div>
+          </Reveal>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+export function AwardsList({
+  awards,
+}: {
+  awards: { id: string; title: string; issuer: string | null; year: number | null }[];
+}) {
+  if (!awards.length) return null;
+  return (
+    <section className="border-y border-current/10">
+      <div className="mx-auto max-w-4xl px-4 py-16 md:px-6">
+        <SectionHeading eyebrow="Recognition" title="Awards & press" />
+        <ul className="flex flex-col divide-y divide-current/10">
+          {awards.map((a) => (
+            <li key={a.id} className="flex items-baseline justify-between gap-4 py-4">
+              <span className="font-medium">{a.title}</span>
+              <span className="text-sm opacity-60">
+                {a.issuer}
+                {a.year ? ` · ${a.year}` : ''}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 export function ContactBand({
   studioName,
   email,

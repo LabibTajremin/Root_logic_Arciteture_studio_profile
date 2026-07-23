@@ -4,6 +4,7 @@ import { SiteHeader, type NavItem } from '@/presentation/components/public/SiteH
 
 const DEFAULT_NAV: NavItem[] = [
   { label: 'Work', href: '/work' },
+  { label: 'Team', href: '/team' },
   { label: 'Contact', href: '/contact' },
 ];
 

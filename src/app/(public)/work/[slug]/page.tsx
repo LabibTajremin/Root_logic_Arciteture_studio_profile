@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { resolveActiveTenantId } from '@/infrastructure/auth/tenant';
 import { getProjectBySlug, getProjectGallery } from '@/infrastructure/db/queries/publicQueries';
-import { Reveal } from '@/presentation/components/public/Reveal';
+import { Lightbox } from '@/presentation/components/public/Lightbox';
 
 export const dynamic = 'force-dynamic';
 
@@ -106,21 +106,12 @@ export default async function ProjectDetailPage({ params }: Params) {
 
       {gallery.length > 0 && (
         <section className="mx-auto max-w-6xl px-4 pb-24 md:px-6">
-          <div className="columns-1 gap-6 sm:columns-2 lg:columns-3 [&>*]:mb-6">
-            {gallery
+          <Lightbox
+            projectTitle={project.title}
+            images={gallery
               .filter((m) => m.type === 'image')
-              .map((m) => (
-                <Reveal key={m.id}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={m.url}
-                    alt={m.altText ?? project.title}
-                    loading="lazy"
-                    className="w-full rounded-[var(--radius)]"
-                  />
-                </Reveal>
-              ))}
-          </div>
+              .map((m) => ({ id: m.id, url: m.url, altText: m.altText }))}
+          />
         </section>
       )}
     </main>

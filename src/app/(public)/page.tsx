@@ -1,17 +1,27 @@
 import { resolveActiveTenantId } from '@/infrastructure/auth/tenant';
 import {
   getActiveHeroSlides,
+  getAwards,
+  getCategoriesWithCounts,
+  getClients,
+  getFaqs,
   getFeaturedProjects,
   getPublishedMembers,
   getServices,
   getSiteSettings,
   getStats,
   getTestimonials,
+  getValues,
 } from '@/infrastructure/db/queries/publicQueries';
 import { Hero } from '@/presentation/components/public/Hero';
+import { FaqAccordion } from '@/presentation/components/public/FaqAccordion';
 import {
+  AwardsList,
+  ClientLogoWall,
   ContactBand,
+  CoreValues,
   FeaturedProjects,
+  PortfolioCategories,
   PrincipalNote,
   Services,
   StatsBand,
@@ -32,25 +42,48 @@ export default async function HomePage() {
     );
   }
 
-  const [site, slides, featured, services, stats, members, testimonials] = await Promise.all([
+  const [
+    site,
+    slides,
+    categories,
+    featured,
+    services,
+    stats,
+    values,
+    members,
+    testimonials,
+    clients,
+    awards,
+    faqs,
+  ] = await Promise.all([
     getSiteSettings(tenantId),
     getActiveHeroSlides(tenantId),
+    getCategoriesWithCounts(tenantId),
     getFeaturedProjects(tenantId),
     getServices(tenantId),
     getStats(tenantId),
+    getValues(tenantId),
     getPublishedMembers(tenantId),
     getTestimonials(tenantId),
+    getClients(tenantId),
+    getAwards(tenantId),
+    getFaqs(tenantId),
   ]);
 
   return (
     <main>
       <Hero slides={slides} />
       <PrincipalNote tagline={site?.tagline ?? null} />
+      <ClientLogoWall clients={clients} />
+      <PortfolioCategories categories={categories} />
       <FeaturedProjects projects={featured} />
       <Services services={services} />
       <StatsBand stats={stats} />
+      <CoreValues values={values} />
       <Team members={members} />
       <Testimonials testimonials={testimonials} />
+      <AwardsList awards={awards} />
+      <FaqAccordion faqs={faqs} />
       <ContactBand
         studioName={site?.studioName ?? 'Maapkathi Studio'}
         email={site?.contactEmail ?? null}

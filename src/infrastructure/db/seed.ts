@@ -368,6 +368,23 @@ async function main() {
     ].map((f, i) => ({ tenantId: DEMO_TENANT_ID, ...f, sortOrder: i, status: 'published' })),
   );
 
+  await db.insert(schema.values).values(
+    [
+      { title: 'Craft', body: 'Details are the difference. We sweat every joint and reveal.' },
+      { title: 'Restraint', body: 'We edit until only what matters remains.' },
+      { title: 'Light', body: 'Natural light is our first material.' },
+      { title: 'Longevity', body: 'Spaces designed to age gracefully, not date quickly.' },
+    ].map((v, i) => ({ tenantId: DEMO_TENANT_ID, ...v, sortOrder: i })),
+  );
+
+  await db.insert(schema.awards).values(
+    [
+      { title: 'Interior of the Year', issuer: 'BD Design Awards', year: 2024 },
+      { title: 'Best Residential Project', issuer: 'Dhaka Architecture Prize', year: 2023 },
+      { title: 'Emerging Studio', issuer: 'South Asia Design Week', year: 2022 },
+    ].map((a, i) => ({ tenantId: DEMO_TENANT_ID, ...a, sortOrder: i })),
+  );
+
   console.log('Demo content seeded.');
   await sql.end();
 }

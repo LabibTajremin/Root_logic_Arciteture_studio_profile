@@ -1,8 +1,10 @@
 import { and, asc, desc, eq } from 'drizzle-orm';
 import { getDb } from '@/infrastructure/db/client';
 import {
+  awards,
   categories,
   clients,
+  faqs,
   heroSlides,
   mediaAssets,
   members,
@@ -11,6 +13,7 @@ import {
   siteSettings,
   stats,
   testimonials,
+  values,
 } from '@/infrastructure/db/schema';
 
 /**
@@ -220,6 +223,39 @@ export async function getClients(tenantId: string) {
     .from(clients)
     .where(eq(clients.tenantId, tenantId))
     .orderBy(asc(clients.sortOrder));
+}
+
+export async function getValues(tenantId: string) {
+  return getDb()
+    .select({ id: values.id, title: values.title, body: values.body })
+    .from(values)
+    .where(eq(values.tenantId, tenantId))
+    .orderBy(asc(values.sortOrder));
+}
+
+export async function getFaqs(tenantId: string) {
+  return getDb()
+    .select({ id: faqs.id, question: faqs.question, answer: faqs.answer })
+    .from(faqs)
+    .where(and(eq(faqs.tenantId, tenantId), eq(faqs.status, 'published')))
+    .orderBy(asc(faqs.sortOrder));
+}
+
+export async function getAwards(tenantId: string) {
+  return getDb()
+    .select({ id: awards.id, title: awards.title, issuer: awards.issuer, year: awards.year })
+    .from(awards)
+    .where(eq(awards.tenantId, tenantId))
+    .orderBy(desc(awards.year));
+}
+
+export async function getCategoriesWithCounts(tenantId: string) {
+  const cats = await getDb()
+    .select({ id: categories.id, name: categories.name, slug: categories.slug })
+    .from(categories)
+    .where(eq(categories.tenantId, tenantId))
+    .orderBy(asc(categories.sortOrder));
+  return cats;
 }
 
 export async function getProjectBySlug(tenantId: string, slug: string) {
