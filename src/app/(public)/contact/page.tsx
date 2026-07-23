@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { resolveActiveTenantId } from '@/infrastructure/auth/tenant';
 import { getSiteSettings } from '@/infrastructure/db/queries/publicQueries';
+import { ContactForm } from '@/presentation/components/public/ContactForm';
 
 export const dynamic = 'force-dynamic';
 
@@ -47,9 +48,11 @@ export default async function ContactPage() {
           </div>
         )}
       </dl>
-      <p className="mt-12 text-sm opacity-60">
-        A full enquiry form with validation and rate limiting is wired in the use-case phase.
-      </p>
+
+      <div className="mt-14">
+        <h2 className="mb-6 text-xl font-medium tracking-tight">Send us a message</h2>
+        <ContactForm />
+      </div>
     </main>
   );
 }
