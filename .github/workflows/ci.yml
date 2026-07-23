@@ -59,14 +59,6 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
-      minio:
-        image: bitnami/minio:latest
-        env:
-          MINIO_ROOT_USER: minioadmin
-          MINIO_ROOT_PASSWORD: minioadmin
-          MINIO_DEFAULT_BUCKETS: mapkathi-test
-        ports:
-          - 9000:9000
     env:
       DATABASE_URL: postgres://mapkathi:mapkathi@localhost:5432/mapkathi
       # S3 contract runs against MinIO (local + S3 in CI; remote drivers stay flagged).
@@ -91,6 +83,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Started as a plain container (not a `services:` entry) because MinIO needs an
+      # explicit `server /data` command, which the services block cannot pass.
+      - name: Start MinIO
+        run: |
+          docker run -d --name minio \
+            -p 9000:9000 \
+            -e MINIO_ROOT_USER=minioadmin \
+            -e MINIO_ROOT_PASSWORD=minioadmin \
+            minio/minio server /data
+
       - name: Wait for MinIO
         run: |
           for i in $(seq 1 30); do
@@ -98,6 +100,15 @@ jobs:
             sleep 2
           done
           echo "minio did not become ready" && exit 1
+
+      # The official image has no MINIO_DEFAULT_BUCKETS equivalent, so create the test
+      # bucket explicitly with the AWS CLI preinstalled on ubuntu-latest runners.
+      - name: Create MinIO bucket
+        run: aws --endpoint-url http://localhost:9000 s3 mb s3://mapkathi-test
+        env:
+          AWS_ACCESS_KEY_ID: minioadmin
+          AWS_SECRET_ACCESS_KEY: minioadmin
+          AWS_DEFAULT_REGION: us-east-1
 
       - name: Run migrations
         run: pnpm db:migrate
