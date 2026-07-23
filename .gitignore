@@ -1,0 +1,45 @@
+# dependencies
+node_modules/
+
+# next.js / build output
+.next/
+out/
+build/
+dist/
+.turbo/
+.vercel/
+
+# env — keep the example committed
+.env
+.env.*
+!.env.example
+
+# test / coverage output
+coverage/
+playwright-report/
+test-results/
+
+# drizzle lock
+drizzle/meta/_journal.lock
+
+# local storage driver output
+uploads/
+
+# secrets & keys
+*.pem
+*-service-account.json
+
+# logs
+*.log
+
+# os / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# misc
+next-env.d.ts
+*.tsbuildinfo

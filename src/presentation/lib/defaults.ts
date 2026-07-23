@@ -1,0 +1,17 @@
+import type { SiteSettings } from '@/domain/entities/Settings';
+
+export const DEFAULT_SITE_SETTINGS: SiteSettings = {
+  tenantId: '',
+  studioName: 'Maapkathi Studio',
+  tagline: null,
+  logoLightMediaId: null,
+  logoDarkMediaId: null,
+  contactEmail: null,
+  contactPhone: null,
+  whatsapp: null,
+  address: null,
+  socials: {},
+  navConfig: null,
+  footer: null,
+  editorVerificationRequired: true,
+};
