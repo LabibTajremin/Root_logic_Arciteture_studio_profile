@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { getActor } from '@/infrastructure/auth/actor';
 import { createContainer } from '@/infrastructure/container';
 import { DEFAULT_SITE_SETTINGS } from '@/presentation/lib/defaults';
+import { isReadOnly } from '@/infrastructure/licence/licenceStatus';
 import { RolePolicy } from '@/domain/services/RolePolicy';
 
 export interface SettingsState {
@@ -21,6 +22,7 @@ export async function updateSettingsAction(
   if (!RolePolicy.canManageSettings(actor.role)) {
     return { error: 'Only admins can change settings.' };
   }
+  if (isReadOnly()) return { error: 'This deployment is read-only (licence).' };
 
   const { repositories } = createContainer();
   const existing = await repositories.site.get(actor.tenantId);

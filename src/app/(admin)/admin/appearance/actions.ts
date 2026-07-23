@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { getActor } from '@/infrastructure/auth/actor';
 import { getDb } from '@/infrastructure/db/client';
 import { themeSettings } from '@/infrastructure/db/schema';
+import { isReadOnly } from '@/infrastructure/licence/licenceStatus';
 import { RolePolicy } from '@/domain/services/RolePolicy';
 
 export interface AppearanceState {
@@ -21,6 +22,7 @@ export async function updateAppearanceAction(
   if (!RolePolicy.canManageSettings(actor.role)) {
     return { error: 'Only admins can change appearance.' };
   }
+  if (isReadOnly()) return { error: 'This deployment is read-only (licence).' };
 
   const values = {
     tenantId: actor.tenantId,

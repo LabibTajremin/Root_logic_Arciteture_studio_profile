@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { getConfig } from '@config/app.config';
 import { getActor } from '@/infrastructure/auth/actor';
+import { isReadOnly } from '@/infrastructure/licence/licenceStatus';
 import { StorageFactory } from '@/infrastructure/storage/StorageFactory';
 import { getDb } from '@/infrastructure/db/client';
 import { mediaAssets } from '@/infrastructure/db/schema';
@@ -31,6 +32,9 @@ function sniff(bytes: Uint8Array): { type: string; ext: string } | null {
 export async function POST(request: Request) {
   const actor = await getActor();
   if (!actor) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (isReadOnly()) {
+    return NextResponse.json({ error: 'This deployment is read-only (licence).' }, { status: 403 });
+  }
 
   const form = await request.formData();
   const file = form.get('file');

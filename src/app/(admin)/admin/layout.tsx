@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { auth, signOut } from '@/infrastructure/auth/auth';
+import { getLicenceStatus } from '@/infrastructure/licence/licenceStatus';
 
 export const metadata: Metadata = {
   title: 'Admin',
@@ -21,9 +22,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const session = await auth();
   if (!session?.user) redirect('/login');
   const { role, name, mustChangePassword } = session.user;
+  const licence = getLicenceStatus();
 
   return (
     <div className="min-h-screen">
+      {licence.readOnly && (
+        <div className="bg-red-600 px-4 py-2 text-center text-sm font-medium text-white">
+          Read-only mode — {licence.reason}. Editing is disabled until the licence is renewed. The
+          public site keeps serving.
+        </div>
+      )}
       {mustChangePassword && (
         <div className="bg-amber-500 px-4 py-2 text-center text-sm font-medium text-black">
           Your account still uses the default password. Please change it in{' '}

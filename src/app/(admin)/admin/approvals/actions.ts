@@ -7,6 +7,7 @@ import { getActor } from '@/infrastructure/auth/actor';
 import { createContainer } from '@/infrastructure/container';
 import { getDb } from '@/infrastructure/db/client';
 import { auditLog, projects } from '@/infrastructure/db/schema';
+import { isReadOnly } from '@/infrastructure/licence/licenceStatus';
 import { Authorization } from '@/application/authorization/Authorization';
 
 export async function approveProjectAction(projectId: string): Promise<{ error?: string }> {
@@ -14,6 +15,7 @@ export async function approveProjectAction(projectId: string): Promise<{ error?:
   if (!actor) redirect('/login');
   const guard = Authorization.ensureCanApprove(actor);
   if (!guard.ok) return { error: guard.error.message };
+  if (isReadOnly()) return { error: 'This deployment is read-only (licence).' };
 
   const { useCases } = createContainer();
   const result = await useCases.publishProject.execute(actor, projectId);
@@ -44,6 +46,7 @@ export async function rejectProjectAction(
   if (!actor) redirect('/login');
   const guard = Authorization.ensureCanApprove(actor);
   if (!guard.ok) return { error: guard.error.message };
+  if (isReadOnly()) return { error: 'This deployment is read-only (licence).' };
 
   await getDb()
     .update(projects)

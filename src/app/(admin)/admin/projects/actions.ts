@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { and, eq } from 'drizzle-orm';
 import { createContainer } from '@/infrastructure/container';
 import { getActor } from '@/infrastructure/auth/actor';
+import { isReadOnly } from '@/infrastructure/licence/licenceStatus';
 import { getDb } from '@/infrastructure/db/client';
 import { mediaAssets, projects } from '@/infrastructure/db/schema';
 
@@ -26,6 +27,7 @@ export async function createProjectAction(
 ): Promise<ProjectFormState> {
   const actor = await getActor();
   if (!actor) redirect('/login');
+  if (isReadOnly()) return { error: 'This deployment is read-only (licence).' };
 
   const title = String(formData.get('title') ?? '').trim();
   const slug = slugify(String(formData.get('slug') || title));
@@ -48,6 +50,7 @@ export async function updateProjectAction(
 ): Promise<ProjectFormState> {
   const actor = await getActor();
   if (!actor) redirect('/login');
+  if (isReadOnly()) return { error: 'This deployment is read-only (licence).' };
   const id = String(formData.get('id'));
   const { useCases } = createContainer();
   const result = await useCases.updateProject.execute(actor, {
@@ -67,6 +70,7 @@ export async function updateProjectAction(
 export async function publishProjectAction(id: string): Promise<{ error?: string }> {
   const actor = await getActor();
   if (!actor) redirect('/login');
+  if (isReadOnly()) return { error: 'This deployment is read-only (licence).' };
   const { useCases } = createContainer();
   const result = await useCases.publishProject.execute(actor, id);
   if (!result.ok) return { error: result.error.message };
@@ -80,6 +84,7 @@ export async function publishProjectAction(id: string): Promise<{ error?: string
 export async function setCoverAction(projectId: string, mediaId: string): Promise<void> {
   const actor = await getActor();
   if (!actor) redirect('/login');
+  if (isReadOnly()) return;
   await getDb()
     .update(projects)
     .set({ coverMediaId: mediaId, updatedAt: new Date() })
