@@ -266,17 +266,35 @@ async function main() {
   ]);
 
   // ── supporting homepage content ──────────────────────────────────────────────
+  const memberDefs = [
+    { name: 'Ayesha Rahman', roleTitle: 'Principal Architect' },
+    { name: 'Tanvir Ahmed', roleTitle: 'Design Lead' },
+    { name: 'Nusrat Jahan', roleTitle: 'Interior Designer' },
+    { name: 'Rafiul Islam', roleTitle: 'Project Manager' },
+  ];
+  const memberPhotoIds = memberDefs.map(() => randomUUID());
+  await db.insert(schema.mediaAssets).values(
+    memberDefs.map((m, i) => ({
+      id: memberPhotoIds[i]!,
+      tenantId: DEMO_TENANT_ID,
+      projectId: null,
+      type: 'image' as const,
+      storageDriver: LOCAL_DRIVER_CODE,
+      storageKey: `demo/team/${i + 1}.jpg`,
+      url: img(m.name, 900, 1200),
+      width: 900,
+      height: 1200,
+      altText: m.name,
+      sortOrder: i,
+    })),
+  );
   await db.insert(schema.members).values(
-    [
-      { name: 'Ayesha Rahman', roleTitle: 'Principal Architect' },
-      { name: 'Tanvir Ahmed', roleTitle: 'Design Lead' },
-      { name: 'Nusrat Jahan', roleTitle: 'Interior Designer' },
-      { name: 'Rafiul Islam', roleTitle: 'Project Manager' },
-    ].map((m, i) => ({
+    memberDefs.map((m, i) => ({
       tenantId: DEMO_TENANT_ID,
       name: m.name,
       roleTitle: m.roleTitle,
       bio: 'Demo team member — editable from the admin panel.',
+      photoMediaId: memberPhotoIds[i]!,
       socials: [{ platform: 'linkedin', url: 'https://linkedin.com' }],
       sortOrder: i,
       status: 'published',

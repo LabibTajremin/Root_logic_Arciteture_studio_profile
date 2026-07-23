@@ -13,13 +13,34 @@ The public site showcases **projects** (photos + video + copy) and **team member
 public site is editable from an **admin panel** — content, branding, theme, motion, SEO, contact details,
 navigation.
 
-> **Status:** Built phase by phase against [`BUILD_INSTRUCTIONS.md`](./BUILD_INSTRUCTIONS.md). See
-> [`docs/`](./docs) for architecture, deployment, theming, and the non-technical client handover guide.
-> Each phase has a verification gate and is committed separately.
+> **Status:** Built phase by phase against [`BUILD_INSTRUCTIONS.md`](./BUILD_INSTRUCTIONS.md). Each phase has a
+> verification gate and is committed separately. See [`docs/`](./docs) for architecture, deployment, theming,
+> testing, and the non-technical client handover guide.
+
+## What's implemented
+
+| Area                                                                                                       | Status        |
+| ---------------------------------------------------------------------------------------------------------- | ------------- |
+| Clean-architecture foundation (domain / application / infrastructure / presentation) + enforced layer rule | ✅            |
+| Typed config with numeric driver codes + boot validation                                                   | ✅            |
+| Postgres schema (23 tables, indexed), migrations, idempotent demo seed                                     | ✅            |
+| Repositories + Unit of Work + cross-tenant isolation                                                       | ✅            |
+| 6 pluggable storage adapters (S3 · R2 · Supabase · Google Drive · Bunny · Local) + contract suite          | ✅            |
+| Auth.js v5, RBAC, argon2id, rate limiting                                                                  | ✅            |
+| Theme + motion engine (24 accents AA-tuned, 22 patterns, per-area fonts/colours, reduced-motion guardrail) | ✅            |
+| Public site (homepage sections, `/work`, project detail, SEO/JSON-LD, sitemap, contact form)               | ✅ core       |
+| Admin panel (projects CRUD, media upload, set cover, publish, Appearance, Settings)                        | ✅ core       |
+| Verification workflow (approvals queue + audit log)                                                        | ✅            |
+| Licensing (Ed25519, offline grace, read-only mode) + multi-tenant host resolution                          | ✅            |
+| Remaining public sections, drag-reorder, nav/section builders, live-preview iframe, Lighthouse CI, billing | ◻ follow-ups |
+
+**Tests:** 88 unit + 18 integration + 8 Playwright e2e, all green in CI (see [`docs/TESTING.md`](./docs/TESTING.md)).
 
 ## Screenshots
 
-_Placeholder — added during the public-site phase (390 / 768 / 1280 / 1920)._
+Homepage (desktop + mobile) rendering the demo seed on the cream + crimson default theme:
+
+_Captured during the build; regenerate with the app running via Playwright. Breakpoints reviewed at 390 / 768 / 1280 / 1920._
 
 ## Stack
 

@@ -40,6 +40,20 @@ reverse proxy (Caddy/Traefik/Nginx) terminating TLS, or expose the container beh
 - **Uploaded media:** whatever the storage driver holds. For `STORAGE_DRIVER=3` (local) back up the `uploads/`
   volume; for object stores, rely on the provider's versioning/lifecycle rules.
 
+## Licensing (self-hosted builds)
+
+For `LICENCE_MODE=2` (perpetual) or `3` (subscription), issue a key with:
+
+```bash
+pnpm tsx scripts/generate-licence.ts client-domain.com pro 2027-01-01
+```
+
+It prints `LICENCE_PUBLIC_KEY` (ship it in the deployment env) and `LICENCE_KEY` (the client's key), plus a
+private key to keep secret for signing future keys. Verification is offline-tolerant: perpetual keys never
+phone home; subscription keys get a 14-day offline grace. When a key is expired or invalid the **admin panel
+becomes read-only** (a red banner explains why) while the **public site keeps serving** — content is never
+taken down by a lapsed licence.
+
 ## Changing admin credentials
 
 Set `ADMIN_EMAIL` / `ADMIN_PASSWORD` before first seed, or change the password from the admin panel after
