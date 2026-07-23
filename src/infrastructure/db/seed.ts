@@ -16,8 +16,10 @@ const DEMO_TENANT_ID = '00000000-0000-4000-8000-000000000001';
 const LOCAL_DRIVER_CODE = 3;
 const DEFAULT_ADMIN_PASSWORD = 'change-this-on-first-login';
 
-// Stable public placeholder media. Admin swaps these out; they are not bundled assets.
-const img = (seed: string, w = 1600, h = 2000) => `https://picsum.photos/seed/${seed}/${w}/${h}`;
+// Local, offline-safe placeholder media (served by /api/placeholder). Relative URLs so
+// they render on any origin. The admin swaps every one of these from the panel.
+const img = (label: string, w = 1600, h = 2000) =>
+  `/api/placeholder/${w}/${h}?label=${encodeURIComponent(label)}`;
 const DEMO_VIDEO_URL =
   'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
 
@@ -138,7 +140,7 @@ async function main() {
       type: 'image' as const,
       storageDriver: LOCAL_DRIVER_CODE,
       storageKey: `demo/hero-${i + 1}.jpg`,
-      url: img(`hero${i + 1}`, 2400, 1350),
+      url: img(`Maapkathi Studio ${i + 1}`, 2400, 1350),
       width: 2400,
       height: 1350,
       altText: `Demo hero image ${i + 1}`,
@@ -186,7 +188,7 @@ async function main() {
         type: 'image',
         storageDriver: LOCAL_DRIVER_CODE,
         storageKey: `demo/${slug}/cover.jpg`,
-        url: img(`${slug}-cover`, 1200, 1500),
+        url: img(p.title, 1200, 1500),
         width: 1200,
         height: 1500,
         altText: `${p.title} — cover`,
@@ -199,7 +201,7 @@ async function main() {
         type: 'image' as const,
         storageDriver: LOCAL_DRIVER_CODE,
         storageKey: `demo/${slug}/gallery-${g + 1}.jpg`,
-        url: img(`${slug}-g${g + 1}`, 1600, 1067),
+        url: img(`${p.title} ${g + 1}`, 1600, 1067),
         width: 1600,
         height: 1067,
         altText: `${p.title} — gallery ${g + 1}`,

@@ -1,0 +1,278 @@
+import { and, asc, desc, eq } from 'drizzle-orm';
+import { getDb } from '@/infrastructure/db/client';
+import {
+  categories,
+  clients,
+  heroSlides,
+  mediaAssets,
+  members,
+  projects,
+  services,
+  siteSettings,
+  stats,
+  testimonials,
+} from '@/infrastructure/db/schema';
+
+/**
+ * Read models for the public site. These are denormalised, media-resolved views built
+ * for server components — no N+1: media is joined, not fetched per row.
+ */
+
+export interface HeroSlideView {
+  id: string;
+  eyebrow: string | null;
+  headline: string;
+  kickerWord: string | null;
+  body: string | null;
+  imageUrl: string | null;
+  videoUrl: string | null;
+  ctaLabel: string | null;
+  ctaHref: string | null;
+}
+
+export interface ProjectCardView {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string | null;
+  categoryName: string | null;
+  coverUrl: string | null;
+  coverBlurhash: string | null;
+  year: number | null;
+  location: string | null;
+}
+
+export async function getSiteSettings(tenantId: string) {
+  const [row] = await getDb()
+    .select()
+    .from(siteSettings)
+    .where(eq(siteSettings.tenantId, tenantId))
+    .limit(1);
+  return row ?? null;
+}
+
+export async function getActiveHeroSlides(tenantId: string): Promise<HeroSlideView[]> {
+  const image = mediaAssets;
+  const rows = await getDb()
+    .select({
+      id: heroSlides.id,
+      eyebrow: heroSlides.eyebrow,
+      headline: heroSlides.headline,
+      kickerWord: heroSlides.kickerWord,
+      body: heroSlides.body,
+      ctaLabel: heroSlides.ctaLabel,
+      ctaHref: heroSlides.ctaHref,
+      imageUrl: image.url,
+      imageId: heroSlides.imageMediaId,
+      videoId: heroSlides.videoMediaId,
+    })
+    .from(heroSlides)
+    .leftJoin(image, eq(image.id, heroSlides.imageMediaId))
+    .where(and(eq(heroSlides.tenantId, tenantId), eq(heroSlides.isActive, true)))
+    .orderBy(asc(heroSlides.sortOrder));
+
+  // Resolve video URLs in one extra query keyed by id (kept O(1) round-trips).
+  const videoIds = rows.map((r) => r.videoId).filter((v): v is string => Boolean(v));
+  const videoMap = new Map<string, string>();
+  if (videoIds.length) {
+    const vids = await getDb()
+      .select({ id: mediaAssets.id, url: mediaAssets.url })
+      .from(mediaAssets)
+      .where(eq(mediaAssets.tenantId, tenantId));
+    for (const v of vids) videoMap.set(v.id, v.url);
+  }
+
+  return rows.map((r) => ({
+    id: r.id,
+    eyebrow: r.eyebrow,
+    headline: r.headline,
+    kickerWord: r.kickerWord,
+    body: r.body,
+    imageUrl: r.imageUrl,
+    videoUrl: r.videoId ? (videoMap.get(r.videoId) ?? null) : null,
+    ctaLabel: r.ctaLabel,
+    ctaHref: r.ctaHref,
+  }));
+}
+
+function projectCardSelect() {
+  return {
+    id: projects.id,
+    slug: projects.slug,
+    title: projects.title,
+    summary: projects.summary,
+    completedAt: projects.completedAt,
+    location: projects.location,
+    categoryName: categories.name,
+    coverUrl: mediaAssets.url,
+    coverBlurhash: mediaAssets.blurhash,
+  };
+}
+
+function toCard(r: {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string | null;
+  completedAt: Date | null;
+  location: string | null;
+  categoryName: string | null;
+  coverUrl: string | null;
+  coverBlurhash: string | null;
+}): ProjectCardView {
+  return {
+    id: r.id,
+    slug: r.slug,
+    title: r.title,
+    summary: r.summary,
+    categoryName: r.categoryName,
+    coverUrl: r.coverUrl,
+    coverBlurhash: r.coverBlurhash,
+    year: r.completedAt ? r.completedAt.getFullYear() : null,
+    location: r.location,
+  };
+}
+
+export async function getFeaturedProjects(tenantId: string, limit = 6): Promise<ProjectCardView[]> {
+  const rows = await getDb()
+    .select(projectCardSelect())
+    .from(projects)
+    .leftJoin(categories, eq(categories.id, projects.categoryId))
+    .leftJoin(mediaAssets, eq(mediaAssets.id, projects.coverMediaId))
+    .where(
+      and(
+        eq(projects.tenantId, tenantId),
+        eq(projects.status, 'published'),
+        eq(projects.isFeatured, true),
+      ),
+    )
+    .orderBy(asc(projects.sortOrder))
+    .limit(limit);
+  return rows.map(toCard);
+}
+
+export async function getPublishedProjects(tenantId: string): Promise<ProjectCardView[]> {
+  const rows = await getDb()
+    .select(projectCardSelect())
+    .from(projects)
+    .leftJoin(categories, eq(categories.id, projects.categoryId))
+    .leftJoin(mediaAssets, eq(mediaAssets.id, projects.coverMediaId))
+    .where(and(eq(projects.tenantId, tenantId), eq(projects.status, 'published')))
+    .orderBy(asc(projects.sortOrder));
+  return rows.map(toCard);
+}
+
+export async function getServices(tenantId: string) {
+  return getDb()
+    .select({
+      id: services.id,
+      title: services.title,
+      slug: services.slug,
+      excerpt: services.excerpt,
+    })
+    .from(services)
+    .where(and(eq(services.tenantId, tenantId), eq(services.status, 'published')))
+    .orderBy(asc(services.sortOrder));
+}
+
+export async function getStats(tenantId: string) {
+  return getDb()
+    .select({ id: stats.id, label: stats.label, value: stats.valueNumber, suffix: stats.suffix })
+    .from(stats)
+    .where(eq(stats.tenantId, tenantId))
+    .orderBy(asc(stats.sortOrder));
+}
+
+export async function getPublishedMembers(tenantId: string) {
+  return getDb()
+    .select({
+      id: members.id,
+      name: members.name,
+      roleTitle: members.roleTitle,
+      bio: members.bio,
+      photoUrl: mediaAssets.url,
+      socials: members.socials,
+    })
+    .from(members)
+    .leftJoin(mediaAssets, eq(mediaAssets.id, members.photoMediaId))
+    .where(and(eq(members.tenantId, tenantId), eq(members.status, 'published')))
+    .orderBy(asc(members.sortOrder));
+}
+
+export async function getTestimonials(tenantId: string) {
+  return getDb()
+    .select({
+      id: testimonials.id,
+      authorName: testimonials.authorName,
+      authorRole: testimonials.authorRole,
+      company: testimonials.company,
+      quote: testimonials.quote,
+      rating: testimonials.rating,
+    })
+    .from(testimonials)
+    .where(and(eq(testimonials.tenantId, tenantId), eq(testimonials.status, 'published')))
+    .orderBy(asc(testimonials.sortOrder));
+}
+
+export async function getClients(tenantId: string) {
+  return getDb()
+    .select({ id: clients.id, name: clients.name, website: clients.website })
+    .from(clients)
+    .where(eq(clients.tenantId, tenantId))
+    .orderBy(asc(clients.sortOrder));
+}
+
+export async function getProjectBySlug(tenantId: string, slug: string) {
+  const [row] = await getDb()
+    .select({
+      id: projects.id,
+      slug: projects.slug,
+      title: projects.title,
+      summary: projects.summary,
+      body: projects.body,
+      location: projects.location,
+      clientName: projects.clientName,
+      areaSqft: projects.areaSqft,
+      completedAt: projects.completedAt,
+      categoryName: categories.name,
+      coverUrl: mediaAssets.url,
+    })
+    .from(projects)
+    .leftJoin(categories, eq(categories.id, projects.categoryId))
+    .leftJoin(mediaAssets, eq(mediaAssets.id, projects.coverMediaId))
+    .where(
+      and(
+        eq(projects.tenantId, tenantId),
+        eq(projects.slug, slug),
+        eq(projects.status, 'published'),
+      ),
+    )
+    .limit(1);
+  return row ?? null;
+}
+
+export async function getProjectGallery(tenantId: string, projectId: string) {
+  return getDb()
+    .select({
+      id: mediaAssets.id,
+      url: mediaAssets.url,
+      altText: mediaAssets.altText,
+      type: mediaAssets.type,
+      blurhash: mediaAssets.blurhash,
+    })
+    .from(mediaAssets)
+    .where(and(eq(mediaAssets.tenantId, tenantId), eq(mediaAssets.projectId, projectId)))
+    .orderBy(asc(mediaAssets.sortOrder));
+}
+
+export async function getRecentProjects(tenantId: string, limit = 8): Promise<ProjectCardView[]> {
+  const rows = await getDb()
+    .select(projectCardSelect())
+    .from(projects)
+    .leftJoin(categories, eq(categories.id, projects.categoryId))
+    .leftJoin(mediaAssets, eq(mediaAssets.id, projects.coverMediaId))
+    .where(and(eq(projects.tenantId, tenantId), eq(projects.status, 'published')))
+    .orderBy(desc(projects.createdAt))
+    .limit(limit);
+  return rows.map(toCard);
+}

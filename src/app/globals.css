@@ -59,8 +59,16 @@ h6 {
   color: var(--heading-color, inherit);
 }
 
-/* ── Scroll-reveal base (reads motion vars; JS adds .is-in when in view) ──────── */
+/*
+ * Scroll reveal. Content is visible by default so a broken/absent bundle never leaves
+ * a blank page. Only once JS confirms it loaded (html.reveal-ready, set pre-paint) do
+ * elements start hidden and animate in — reading timing/distance from the motion vars.
+ */
 [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+html.reveal-ready [data-reveal] {
   opacity: 0;
   transform: translateY(var(--motion-distance));
   transition:
@@ -68,14 +76,19 @@ h6 {
     transform var(--motion-duration) var(--motion-ease);
   will-change: opacity, transform;
 }
-[data-reveal].is-in {
+html.reveal-ready [data-reveal].is-in {
   opacity: 1;
   transform: none;
 }
-/* If JS never runs, content must still be visible — never trapped at opacity:0. */
-.no-js [data-reveal] {
-  opacity: 1;
-  transform: none;
+
+/* Ken-Burns hero drift — transform only (zero CLS). */
+@keyframes kenburns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
 }
 
 /*
