@@ -33,6 +33,15 @@ export default async function ServicesPage() {
         <div className="flex flex-col gap-16">
           {categories.map((cat, i) => (
             <Reveal key={cat.id} as="section" delayIndex={i % 3}>
+              {cat.iconUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={cat.iconUrl}
+                  alt=""
+                  aria-hidden
+                  className="service-icon mb-4 h-14 w-14 object-contain"
+                />
+              )}
               <h2
                 className="text-2xl font-medium tracking-tight"
                 style={{ fontFamily: 'var(--font-headings)' }}
@@ -44,6 +53,15 @@ export default async function ServicesPage() {
                 <ul className="mt-6 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
                   {cat.children.map((child) => (
                     <li key={child.id} className="rounded-md border border-current/10 p-4">
+                      {child.iconUrl && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={child.iconUrl}
+                          alt=""
+                          aria-hidden
+                          className="service-icon mb-2 h-8 w-8 object-contain"
+                        />
+                      )}
                       <h3 className="font-medium">{child.title}</h3>
                       {child.excerpt && <p className="mt-1 text-sm opacity-70">{child.excerpt}</p>}
                     </li>

@@ -22,6 +22,16 @@
   --logo-color: #0f6e6e;
 }
 
+/* Monochrome service icons: invert dark line-art to light in dark mode. */
+:root[data-theme='dark'] .service-icon {
+  filter: invert(1) brightness(1.6);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .service-icon {
+    filter: invert(1) brightness(1.6);
+  }
+}
+
 /* Admin-uploaded tenant logo: swap light/dark variant by theme. */
 .tenant-logo-dark {
   display: none;

@@ -54,6 +54,7 @@ export async function createServiceAction(
     title,
     slug,
     excerpt: (formData.get('excerpt') as string) || null,
+    iconMediaId: (formData.get('iconMediaId') as string) || null,
     parentId,
     sortOrder: Date.now(),
     status: 'published',
@@ -74,6 +75,18 @@ export async function updateServiceAction(
   await getDb()
     .update(services)
     .set({ title: patch.title, excerpt: patch.excerpt || null, updatedAt: new Date() })
+    .where(and(eq(services.tenantId, actor.tenantId), eq(services.id, id)));
+  revalidatePath('/admin/services');
+  revalidatePath('/services');
+  revalidatePath('/');
+}
+
+export async function setServiceIconAction(id: string, mediaId: string): Promise<void> {
+  const actor = await requireAdmin();
+  if (!actor) return;
+  await getDb()
+    .update(services)
+    .set({ iconMediaId: mediaId, updatedAt: new Date() })
     .where(and(eq(services.tenantId, actor.tenantId), eq(services.id, id)));
   revalidatePath('/admin/services');
   revalidatePath('/services');

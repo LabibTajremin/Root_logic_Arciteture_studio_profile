@@ -175,7 +175,16 @@ export async function getPublishedProjects(tenantId: string): Promise<ProjectCar
   return rows.map(toCard);
 }
 
-export async function getServices(tenantId: string) {
+export interface ServiceFlatView {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  parentId: string | null;
+  iconUrl: string | null;
+}
+
+export async function getServices(tenantId: string): Promise<ServiceFlatView[]> {
   return getDb()
     .select({
       id: services.id,
@@ -183,8 +192,10 @@ export async function getServices(tenantId: string) {
       slug: services.slug,
       excerpt: services.excerpt,
       parentId: services.parentId,
+      iconUrl: mediaAssets.url,
     })
     .from(services)
+    .leftJoin(mediaAssets, eq(mediaAssets.id, services.iconMediaId))
     .where(and(eq(services.tenantId, tenantId), eq(services.status, 'published')))
     .orderBy(asc(services.sortOrder));
 }
@@ -194,19 +205,18 @@ export interface ServiceCategoryView {
   title: string;
   slug: string;
   excerpt: string | null;
-  children: { id: string; title: string; slug: string; excerpt: string | null }[];
-}
-
-/** Nests flat services into top-level categories with their sub-services. */
-export function groupServicesByCategory(
-  flat: {
+  iconUrl: string | null;
+  children: {
     id: string;
     title: string;
     slug: string;
     excerpt: string | null;
-    parentId: string | null;
-  }[],
-): ServiceCategoryView[] {
+    iconUrl: string | null;
+  }[];
+}
+
+/** Nests flat services into top-level categories with their sub-services. */
+export function groupServicesByCategory(flat: ServiceFlatView[]): ServiceCategoryView[] {
   const topLevel = flat.filter((s) => !s.parentId);
   return topLevel.map((top) => ({
     ...top,

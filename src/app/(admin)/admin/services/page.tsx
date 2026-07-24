@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { asc, eq } from 'drizzle-orm';
 import { getActor } from '@/infrastructure/auth/actor';
 import { getDb } from '@/infrastructure/db/client';
-import { services } from '@/infrastructure/db/schema';
+import { mediaAssets, services } from '@/infrastructure/db/schema';
 import { RolePolicy } from '@/domain/services/RolePolicy';
 import { ServiceManager } from '@/presentation/components/admin/ServiceManager';
 
@@ -20,8 +20,10 @@ export default async function ServicesAdminPage() {
       excerpt: services.excerpt,
       parentId: services.parentId,
       status: services.status,
+      iconUrl: mediaAssets.url,
     })
     .from(services)
+    .leftJoin(mediaAssets, eq(mediaAssets.id, services.iconMediaId))
     .where(eq(services.tenantId, actor.tenantId))
     .orderBy(asc(services.sortOrder));
 
