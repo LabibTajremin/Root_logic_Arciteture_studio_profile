@@ -56,6 +56,26 @@ export function SiteHeader({
             </a>
           )}
           <ThemeToggle />
+          <Link
+            href="/admin"
+            aria-label="Admin login"
+            title="Admin login"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-current/15 text-current"
+          >
+            <svg
+              aria-hidden
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 2 4 5v6c0 5 3.4 8.7 8 11 4.6-2.3 8-6 8-11V5l-8-3Z" />
+            </svg>
+          </Link>
           <button
             type="button"
             aria-label="Open menu"
