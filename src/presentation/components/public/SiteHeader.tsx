@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { Logo } from '@/presentation/components/public/Logo';
 import { ThemeToggle } from '@/presentation/components/public/ThemeToggle';
 
 export interface NavItem {
@@ -27,12 +28,8 @@ export function SiteHeader({
   return (
     <header className="sticky top-0 z-40 border-b border-current/10 bg-[var(--background)]/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:px-6">
-        <Link
-          href="/"
-          className="text-lg font-semibold tracking-tight"
-          style={{ fontFamily: 'var(--font-hero)' }}
-        >
-          {studioName}
+        <Link href="/" aria-label={studioName}>
+          <Logo />
         </Link>
 
         <nav
@@ -91,7 +88,8 @@ export function SiteHeader({
       {open && (
         <div className="fixed inset-0 z-50 flex flex-col bg-[var(--background)] p-6 md:hidden">
           <div className="flex items-center justify-between">
-            <span className="text-lg font-semibold">{studioName}</span>
+            <Logo />
+            <span className="sr-only">{studioName}</span>
             <button
               type="button"
               aria-label="Close menu"

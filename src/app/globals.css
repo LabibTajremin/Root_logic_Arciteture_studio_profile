@@ -17,6 +17,9 @@
   --radius: 6px;
   --font-headings: Georgia, serif;
   --font-body: system-ui, sans-serif;
+
+  /* Maapkathi wordmark: teal in light mode, white in dark mode. */
+  --logo-color: #0f6e6e;
 }
 
 :root[data-theme='dark'] {
@@ -24,6 +27,7 @@
   --foreground: #f2ece6;
   --accent: #c04a57;
   --accent-foreground: #0d0b0a;
+  --logo-color: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -32,6 +36,7 @@
     --foreground: #f2ece6;
     --accent: #c04a57;
     --accent-foreground: #0d0b0a;
+    --logo-color: #ffffff;
   }
 }
 
