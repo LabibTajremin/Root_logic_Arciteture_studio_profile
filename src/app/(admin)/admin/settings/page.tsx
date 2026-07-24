@@ -19,7 +19,7 @@ export default async function SettingsPage() {
       <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
       <SettingsForm
         current={{
-          studioName: site?.studioName ?? 'Maapkathi Studio',
+          studioName: site?.studioName ?? 'Maapkathi',
           tagline: site?.tagline ?? '',
           contactEmail: site?.contactEmail ?? '',
           contactPhone: site?.contactPhone ?? '',

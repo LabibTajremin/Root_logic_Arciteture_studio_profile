@@ -15,7 +15,7 @@ export default async function LoginPage() {
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-8 px-6">
       <div className="flex flex-col gap-1">
-        <p className="text-xs uppercase tracking-widest opacity-60">Maapkathi Studio</p>
+        <p className="text-xs uppercase tracking-widest opacity-60">Maapkathi</p>
         <h1 className="text-2xl font-semibold tracking-tight">Admin sign in</h1>
       </div>
       <LoginForm />
