@@ -12,16 +12,14 @@ export function LogoMark({ className }: { className?: string }) {
       style={{ color: 'var(--logo-color)' }}
       aria-hidden
     >
+      <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" strokeWidth="6" />
       <path
-        d="M50 8a42 42 0 1 1 -29.7 71.7"
+        d="M63 34c10 7 10 21 0 28-8 6-19 5-25-2-4-5-4-11 1-15 4-3 9-2 11 1 2 3 0 6-3 6"
         fill="none"
         stroke="currentColor"
         strokeWidth="6"
         strokeLinecap="round"
-      />
-      <path
-        d="M50 25 A25 25 0 0 1 50 75 A12.5 12.5 0 0 1 50 50 A12.5 12.5 0 0 0 50 25 Z"
-        fill="currentColor"
+        strokeLinejoin="round"
       />
     </svg>
   );
