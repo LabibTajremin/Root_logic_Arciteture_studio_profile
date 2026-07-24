@@ -183,7 +183,13 @@ export function Team({
 export function Testimonials({
   testimonials,
 }: {
-  testimonials: { id: string; authorName: string; company: string | null; quote: string }[];
+  testimonials: {
+    id: string;
+    authorName: string;
+    company: string | null;
+    quote: string;
+    avatarUrl?: string | null;
+  }[];
 }) {
   if (!testimonials.length) return null;
   return (
@@ -193,16 +199,22 @@ export function Testimonials({
         <div className="flex flex-col gap-12">
           {testimonials.map((t) => (
             <Reveal key={t.id}>
-              <figure className="flex flex-col gap-4">
+              <figure className="flex flex-col items-center gap-4">
                 <blockquote
                   className="text-[clamp(1.3rem,3vw,2rem)] font-light leading-snug"
                   style={{ fontFamily: 'var(--font-headings)' }}
                 >
                   “{t.quote}”
                 </blockquote>
-                <figcaption className="text-sm opacity-70">
-                  {t.authorName}
-                  {t.company ? `, ${t.company}` : ''}
+                <figcaption className="flex items-center gap-3 text-sm opacity-70">
+                  {t.avatarUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={t.avatarUrl} alt="" className="h-10 w-10 rounded-full object-cover" />
+                  )}
+                  <span>
+                    {t.authorName}
+                    {t.company ? `, ${t.company}` : ''}
+                  </span>
                 </figcaption>
               </figure>
             </Reveal>
@@ -241,16 +253,31 @@ function ClientLetterMark({ name, index }: { name: string; index: number }) {
   );
 }
 
-export function ClientLogoWall({ clients }: { clients: { id: string; name: string }[] }) {
+export function ClientLogoWall({
+  clients,
+}: {
+  clients: { id: string; name: string; logoUrl?: string | null }[];
+}) {
   if (!clients.length) return null;
   return (
     <section className="border-y border-current/10">
       <div className="mx-auto max-w-6xl px-4 py-12 md:px-6">
         <p className="mb-6 text-center text-xs uppercase tracking-[0.2em] opacity-50">Trusted by</p>
         <div className="grid grid-cols-2 items-center gap-6 sm:grid-cols-3 md:grid-cols-6">
-          {clients.map((c, i) => (
-            <ClientLetterMark key={c.id} name={c.name} index={i} />
-          ))}
+          {clients.map((c, i) =>
+            c.logoUrl ? (
+              <div
+                key={c.id}
+                className="flex h-14 items-center justify-center rounded-md border border-current/10 px-3"
+                title={c.name}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={c.logoUrl} alt={c.name} className="max-h-8 w-auto object-contain" />
+              </div>
+            ) : (
+              <ClientLetterMark key={c.id} name={c.name} index={i} />
+            ),
+          )}
         </div>
       </div>
     </section>

@@ -257,16 +257,24 @@ export async function getTestimonials(tenantId: string) {
       company: testimonials.company,
       quote: testimonials.quote,
       rating: testimonials.rating,
+      avatarUrl: mediaAssets.url,
     })
     .from(testimonials)
+    .leftJoin(mediaAssets, eq(mediaAssets.id, testimonials.avatarMediaId))
     .where(and(eq(testimonials.tenantId, tenantId), eq(testimonials.status, 'published')))
     .orderBy(asc(testimonials.sortOrder));
 }
 
 export async function getClients(tenantId: string) {
   return getDb()
-    .select({ id: clients.id, name: clients.name, website: clients.website })
+    .select({
+      id: clients.id,
+      name: clients.name,
+      website: clients.website,
+      logoUrl: mediaAssets.url,
+    })
     .from(clients)
+    .leftJoin(mediaAssets, eq(mediaAssets.id, clients.logoMediaId))
     .where(eq(clients.tenantId, tenantId))
     .orderBy(asc(clients.sortOrder));
 }
@@ -289,8 +297,15 @@ export async function getFaqs(tenantId: string) {
 
 export async function getAwards(tenantId: string) {
   return getDb()
-    .select({ id: awards.id, title: awards.title, issuer: awards.issuer, year: awards.year })
+    .select({
+      id: awards.id,
+      title: awards.title,
+      issuer: awards.issuer,
+      year: awards.year,
+      imageUrl: mediaAssets.url,
+    })
     .from(awards)
+    .leftJoin(mediaAssets, eq(mediaAssets.id, awards.mediaId))
     .where(eq(awards.tenantId, tenantId))
     .orderBy(desc(awards.year));
 }
