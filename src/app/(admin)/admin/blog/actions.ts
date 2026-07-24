@@ -80,23 +80,42 @@ export async function updatePostAction(
   const actor = await requireAdmin();
   if (!actor) return { error: 'Not permitted.' };
 
-  await getDb()
+  const db = getDb();
+  const slug = patch.slug.trim();
+  if (!slug) return { error: 'Slug is required.' };
+
+  // Guard the (tenant, slug) unique constraint so renaming to an existing slug
+  // returns a friendly message instead of crashing.
+  const clash = await db.query.posts.findFirst({
+    where: and(eq(posts.tenantId, actor.tenantId), eq(posts.slug, slug)),
+  });
+  if (clash && clash.id !== id) {
+    return { error: `Another post already uses the slug "${slug}".` };
+  }
+
+  // Preserve the original publish date; only stamp it the first time a post goes live.
+  const current = await db.query.posts.findFirst({
+    where: and(eq(posts.tenantId, actor.tenantId), eq(posts.id, id)),
+  });
+  const publishedAt = patch.status === 'published' ? (current?.publishedAt ?? new Date()) : null;
+
+  await db
     .update(posts)
     .set({
       title: patch.title,
-      slug: patch.slug,
+      slug,
       excerpt: patch.excerpt || null,
       body: patch.body || null,
       tags: patch.tags,
       status: patch.status,
-      publishedAt: patch.status === 'published' ? new Date() : null,
+      publishedAt,
       updatedAt: new Date(),
     })
     .where(and(eq(posts.tenantId, actor.tenantId), eq(posts.id, id)));
 
   revalidatePath('/admin/blog');
   revalidatePath('/blog');
-  revalidatePath(`/blog/${patch.slug}`);
+  revalidatePath(`/blog/${slug}`);
   return {};
 }
 

@@ -22,6 +22,7 @@ const NAV: { href: string; label: string; adminOnly?: boolean }[] = [
   { href: '/admin/users', label: 'Users', adminOnly: true },
   { href: '/admin/appearance', label: 'Appearance' },
   { href: '/admin/settings', label: 'Settings', adminOnly: true },
+  { href: '/admin/account', label: 'Account' },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

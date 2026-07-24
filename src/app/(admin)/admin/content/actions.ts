@@ -99,7 +99,14 @@ export async function createContentAction(
     sortOrder: Date.now(),
   };
   if (HAS_STATUS.has(entity)) values_.status = 'published';
-  if (entity === 'categories') values_.slug = slugify(String(fields.name ?? ''));
+  if (entity === 'categories') {
+    let slug = slugify(String(fields.name ?? ''));
+    const existing = await getDb().query.categories.findFirst({
+      where: and(eq(categories.tenantId, actor.tenantId), eq(categories.slug, slug)),
+    });
+    if (existing) slug = `${slug}-${Date.now().toString(36)}`;
+    values_.slug = slug;
+  }
   if (IMAGE_COL[entity]) {
     const mediaId = (formData.get('imageMediaId') as string) || null;
     if (mediaId) values_[IMAGE_COL[entity]!] = mediaId;
