@@ -16,7 +16,7 @@ export default async function PublicLayout({ children }: { children: React.React
   return (
     <div className="pattern-layer relative">
       <SiteHeader
-        studioName={site?.studioName ?? 'Maapkathi Studio'}
+        studioName={site?.studioName ?? 'Maapkathi'}
         nav={nav}
         phone={site?.contactPhone ?? null}
       />

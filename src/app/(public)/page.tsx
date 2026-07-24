@@ -36,7 +36,7 @@ export default async function HomePage() {
   if (!tenantId) {
     return (
       <main className="mx-auto max-w-2xl px-6 py-32">
-        <h1 className="text-3xl font-semibold">Maapkathi Studio</h1>
+        <h1 className="text-3xl font-semibold">Maapkathi</h1>
         <p className="mt-4 opacity-70">No tenant configured yet. Run `pnpm db:seed`.</p>
       </main>
     );
@@ -85,7 +85,7 @@ export default async function HomePage() {
       <AwardsList awards={awards} />
       <FaqAccordion faqs={faqs} />
       <ContactBand
-        studioName={site?.studioName ?? 'Maapkathi Studio'}
+        studioName={site?.studioName ?? 'Maapkathi'}
         email={site?.contactEmail ?? null}
         phone={site?.contactPhone ?? null}
       />

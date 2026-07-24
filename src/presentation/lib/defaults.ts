@@ -2,7 +2,7 @@ import type { SiteSettings } from '@/domain/entities/Settings';
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   tenantId: '',
-  studioName: 'Maapkathi Studio',
+  studioName: 'Maapkathi',
   tagline: null,
   logoLightMediaId: null,
   logoDarkMediaId: null,

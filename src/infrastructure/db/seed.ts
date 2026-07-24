@@ -86,7 +86,7 @@ async function main() {
     .insert(schema.siteSettings)
     .values({
       tenantId: DEMO_TENANT_ID,
-      studioName: 'Maapkathi Demo Studio',
+      studioName: 'Maapkathi',
       tagline: 'Interiors with intent.',
       contactEmail: 'hello@demo-studio.test',
       contactPhone: '+880 1700 000000',
@@ -101,8 +101,8 @@ async function main() {
     .insert(schema.seoSettings)
     .values({
       tenantId: DEMO_TENANT_ID,
-      defaultTitle: 'Maapkathi Demo Studio',
-      defaultDescription: 'A demo interior & architecture portfolio built on Maapkathi Studio.',
+      defaultTitle: 'Maapkathi',
+      defaultDescription: 'A demo interior & architecture portfolio built on Maapkathi.',
     })
     .onConflictDoNothing();
 
@@ -140,7 +140,7 @@ async function main() {
       type: 'image' as const,
       storageDriver: LOCAL_DRIVER_CODE,
       storageKey: `demo/hero-${i + 1}.jpg`,
-      url: img(`Maapkathi Studio ${i + 1}`, 2400, 1350),
+      url: img(`Maapkathi ${i + 1}`, 2400, 1350),
       width: 2400,
       height: 1350,
       altText: `Demo hero image ${i + 1}`,
@@ -233,7 +233,7 @@ async function main() {
   await db.insert(schema.heroSlides).values([
     {
       tenantId: DEMO_TENANT_ID,
-      eyebrow: 'Maapkathi Demo Studio',
+      eyebrow: 'Maapkathi',
       headline: 'Spaces designed around how you live',
       kickerWord: 'design',
       body: 'A demo hero — swap these images and the background video from the admin panel.',

@@ -6,8 +6,8 @@ import { getActiveTheme } from '@/presentation/theme/getActiveTheme';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Maapkathi Studio',
-    template: '%s · Maapkathi Studio',
+    default: 'Maapkathi',
+    template: '%s · Maapkathi',
   },
   description:
     'White-label portfolio & showcase platform for interior and architectural design studios.',
