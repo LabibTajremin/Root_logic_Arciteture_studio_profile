@@ -56,6 +56,7 @@ export async function createPostAction(
       slug,
       title,
       excerpt: (formData.get('excerpt') as string) || null,
+      coverMediaId: (formData.get('coverMediaId') as string) || null,
       status: 'draft',
     })
     .returning();

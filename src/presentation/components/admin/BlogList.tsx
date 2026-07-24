@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   createPostAction,
@@ -23,6 +23,30 @@ const field =
 export function BlogList({ posts }: { posts: PostRow[] }) {
   const router = useRouter();
   const [state, action, pending] = useActionState<PostFormState, FormData>(createPostAction, {});
+  const [coverId, setCoverId] = useState('');
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    if (!pending && state.postId) {
+      setCoverId('');
+      setCoverPreview(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pending]);
+
+  async function uploadCover(file: File) {
+    setUploading(true);
+    const body = new FormData();
+    body.set('file', file);
+    const res = await fetch('/api/admin/upload', { method: 'POST', body });
+    if (res.ok) {
+      const { media } = (await res.json()) as { media: { id: string; url: string } };
+      setCoverId(media.id);
+      setCoverPreview(media.url);
+    }
+    setUploading(false);
+  }
 
   return (
     <div className="flex flex-col gap-8">
@@ -73,6 +97,33 @@ export function BlogList({ posts }: { posts: PostRow[] }) {
         className="flex max-w-xl flex-col gap-3 border-t border-current/10 pt-6"
       >
         <h2 className="text-lg font-medium">New post</h2>
+
+        <div>
+          <input type="hidden" name="coverMediaId" value={coverId} />
+          <div className="flex items-center gap-3">
+            <div className="relative aspect-video w-40 shrink-0 overflow-hidden rounded-md bg-current/5">
+              {coverPreview && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={coverPreview} alt="" className="h-full w-full object-cover" />
+              )}
+            </div>
+            <label className="min-h-11 cursor-pointer rounded-md border border-current/20 px-3 py-2 text-sm">
+              {uploading ? 'Uploading…' : coverId ? 'Replace cover' : 'Upload cover'}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) void uploadCover(f);
+                  e.target.value = '';
+                }}
+              />
+            </label>
+          </div>
+          <p className="mt-1.5 text-xs opacity-60">Recommended ratio 4:3 or 16:9.</p>
+        </div>
+
         <input name="title" placeholder="Title" required className={field} />
         <textarea
           name="excerpt"
