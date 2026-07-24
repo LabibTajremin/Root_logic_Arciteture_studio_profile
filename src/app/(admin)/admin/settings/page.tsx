@@ -37,6 +37,11 @@ export default async function SettingsPage() {
           logoLightUrl: logoLight?.url ?? '',
           logoDarkMediaId: site?.logoDarkMediaId ?? '',
           logoDarkUrl: logoDark?.url ?? '',
+          blogEnabled: site?.blogEnabled ?? false,
+          visionMissionEnabled: site?.visionMissionEnabled ?? false,
+          visionText: site?.visionText ?? '',
+          missionText: site?.missionText ?? '',
+          logoShowTitle: site?.logoShowTitle ?? true,
         }}
       />
     </section>

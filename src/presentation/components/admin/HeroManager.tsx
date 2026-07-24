@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   createHeroSlideAction,
@@ -29,6 +29,17 @@ export function HeroManager({ slides }: { slides: HeroSlideRow[] }) {
     {},
   );
   const [uploadingId, setUploadingId] = useState<string | null>(null);
+  const [newSlideImageId, setNewSlideImageId] = useState('');
+  const [newSlideImagePreview, setNewSlideImagePreview] = useState<string | null>(null);
+  const [newSlideUploading, setNewSlideUploading] = useState(false);
+
+  useEffect(() => {
+    if (!pending && !state.error) {
+      setNewSlideImageId('');
+      setNewSlideImagePreview(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pending]);
 
   async function uploadImage(slideId: string, file: File) {
     setUploadingId(slideId);
@@ -41,6 +52,19 @@ export function HeroManager({ slides }: { slides: HeroSlideRow[] }) {
     }
     setUploadingId(null);
     router.refresh();
+  }
+
+  async function uploadNewSlideImage(file: File) {
+    setNewSlideUploading(true);
+    const body = new FormData();
+    body.set('file', file);
+    const res = await fetch('/api/admin/upload', { method: 'POST', body });
+    if (res.ok) {
+      const { media } = (await res.json()) as { media: { id: string; url: string } };
+      setNewSlideImageId(media.id);
+      setNewSlideImagePreview(media.url);
+    }
+    setNewSlideUploading(false);
   }
 
   return (
@@ -110,6 +134,37 @@ export function HeroManager({ slides }: { slides: HeroSlideRow[] }) {
         className="flex max-w-xl flex-col gap-3 border-t border-current/10 pt-6"
       >
         <h2 className="text-lg font-medium">Add a slide</h2>
+
+        <div>
+          <input type="hidden" name="imageMediaId" value={newSlideImageId} />
+          <div className="flex items-center gap-3">
+            <div className="relative aspect-video w-32 shrink-0 overflow-hidden rounded-md bg-current/5">
+              {newSlideImagePreview && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={newSlideImagePreview} alt="" className="h-full w-full object-cover" />
+              )}
+            </div>
+            <label className="min-h-11 cursor-pointer rounded-md border border-current/20 px-3 py-2 text-sm">
+              {newSlideUploading
+                ? 'Uploading…'
+                : newSlideImageId
+                  ? 'Replace image'
+                  : 'Upload image'}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) void uploadNewSlideImage(f);
+                  e.target.value = '';
+                }}
+              />
+            </label>
+          </div>
+          <p className="mt-1.5 text-xs opacity-60">Recommended ratio 16:9, at least 2400×1350px.</p>
+        </div>
+
         <input name="eyebrow" placeholder="Eyebrow (optional)" className={field} />
         <input name="headline" placeholder="Headline" required className={field} />
         <input name="kickerWord" placeholder="Kicker word (optional)" className={field} />

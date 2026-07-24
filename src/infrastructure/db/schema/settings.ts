@@ -18,6 +18,12 @@ export const siteSettings = pgTable(
     navConfig: jsonb('nav_config').$type<unknown>(),
     footer: jsonb('footer').$type<unknown>(),
     editorVerificationRequired: boolean('editor_verification_required').notNull().default(true),
+    blogEnabled: boolean('blog_enabled').notNull().default(false),
+    visionMissionEnabled: boolean('vision_mission_enabled').notNull().default(false),
+    visionText: text('vision_text'),
+    missionText: text('mission_text'),
+    // When false, the header shows only the logo image (for logos that already include the name).
+    logoShowTitle: boolean('logo_show_title').notNull().default(true),
     // Admin-set expected media aspect ratios; surfaced as upload helper text.
     mediaRatios: jsonb('media_ratios').$type<Record<string, string>>().notNull().default({
       heroImage: '16:9',

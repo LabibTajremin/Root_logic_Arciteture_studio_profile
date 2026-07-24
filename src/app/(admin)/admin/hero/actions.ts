@@ -41,6 +41,7 @@ export async function createHeroSlideAction(
       body: (formData.get('body') as string) || null,
       ctaLabel: (formData.get('ctaLabel') as string) || null,
       ctaHref: (formData.get('ctaHref') as string) || null,
+      imageMediaId: (formData.get('imageMediaId') as string) || null,
       sortOrder: Date.now(),
       isActive: true,
     });

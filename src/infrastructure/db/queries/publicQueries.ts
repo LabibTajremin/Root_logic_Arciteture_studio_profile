@@ -9,6 +9,7 @@ import {
   heroSlides,
   mediaAssets,
   members,
+  posts,
   projects,
   services,
   siteSettings,
@@ -181,10 +182,36 @@ export async function getServices(tenantId: string) {
       title: services.title,
       slug: services.slug,
       excerpt: services.excerpt,
+      parentId: services.parentId,
     })
     .from(services)
     .where(and(eq(services.tenantId, tenantId), eq(services.status, 'published')))
     .orderBy(asc(services.sortOrder));
+}
+
+export interface ServiceCategoryView {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  children: { id: string; title: string; slug: string; excerpt: string | null }[];
+}
+
+/** Nests flat services into top-level categories with their sub-services. */
+export function groupServicesByCategory(
+  flat: {
+    id: string;
+    title: string;
+    slug: string;
+    excerpt: string | null;
+    parentId: string | null;
+  }[],
+): ServiceCategoryView[] {
+  const topLevel = flat.filter((s) => !s.parentId);
+  return topLevel.map((top) => ({
+    ...top,
+    children: flat.filter((s) => s.parentId === top.id),
+  }));
 }
 
 export async function getStats(tenantId: string) {
@@ -320,4 +347,58 @@ export async function getRecentProjects(tenantId: string, limit = 8): Promise<Pr
     .orderBy(desc(projects.createdAt))
     .limit(limit);
   return rows.map(toCard);
+}
+
+export interface BlogPostCardView {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  coverUrl: string | null;
+  publishedAt: Date | null;
+  tags: string[];
+}
+
+export async function getPublishedPosts(tenantId: string): Promise<BlogPostCardView[]> {
+  const rows = await getDb()
+    .select({
+      id: posts.id,
+      slug: posts.slug,
+      title: posts.title,
+      excerpt: posts.excerpt,
+      coverUrl: mediaAssets.url,
+      publishedAt: posts.publishedAt,
+      tags: posts.tags,
+    })
+    .from(posts)
+    .leftJoin(mediaAssets, eq(mediaAssets.id, posts.coverMediaId))
+    .where(and(eq(posts.tenantId, tenantId), eq(posts.status, 'published')))
+    .orderBy(desc(posts.publishedAt));
+  return rows;
+}
+
+export interface BlogPostDetailView extends BlogPostCardView {
+  body: string | null;
+}
+
+export async function getPostBySlug(
+  tenantId: string,
+  slug: string,
+): Promise<BlogPostDetailView | null> {
+  const [row] = await getDb()
+    .select({
+      id: posts.id,
+      slug: posts.slug,
+      title: posts.title,
+      excerpt: posts.excerpt,
+      body: posts.body,
+      coverUrl: mediaAssets.url,
+      publishedAt: posts.publishedAt,
+      tags: posts.tags,
+    })
+    .from(posts)
+    .leftJoin(mediaAssets, eq(mediaAssets.id, posts.coverMediaId))
+    .where(and(eq(posts.tenantId, tenantId), eq(posts.slug, slug), eq(posts.status, 'published')))
+    .limit(1);
+  return row ?? null;
 }

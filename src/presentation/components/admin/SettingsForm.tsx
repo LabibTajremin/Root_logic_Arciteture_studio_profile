@@ -17,6 +17,11 @@ export interface SettingsValues {
   logoLightUrl: string;
   logoDarkMediaId: string;
   logoDarkUrl: string;
+  blogEnabled: boolean;
+  visionMissionEnabled: boolean;
+  visionText: string;
+  missionText: string;
+  logoShowTitle: boolean;
 }
 
 function LogoUploadField({
@@ -140,6 +145,22 @@ export function SettingsForm({ current }: { current: SettingsValues }) {
         />
       </div>
 
+      <label className="flex items-start gap-3 rounded-md border border-current/15 p-4 text-sm">
+        <input
+          type="checkbox"
+          name="logoShowTitle"
+          defaultChecked={current.logoShowTitle}
+          className="mt-1"
+        />
+        <span>
+          <span className="font-medium">Show studio name next to the logo</span>
+          <span className="mt-1 block opacity-70">
+            Turn this off if your uploaded logo already includes the studio name, so it isn’t shown
+            twice.
+          </span>
+        </span>
+      </label>
+
       <label className="mt-2 flex items-start gap-3 rounded-md border border-current/15 p-4 text-sm">
         <input
           type="checkbox"
@@ -155,6 +176,57 @@ export function SettingsForm({ current }: { current: SettingsValues }) {
           </span>
         </span>
       </label>
+
+      <label className="flex items-start gap-3 rounded-md border border-current/15 p-4 text-sm">
+        <input
+          type="checkbox"
+          name="blogEnabled"
+          defaultChecked={current.blogEnabled}
+          className="mt-1"
+        />
+        <span>
+          <span className="font-medium">Enable blog</span>
+          <span className="mt-1 block opacity-70">
+            Shows the Blog nav link and the public /blog pages. Manage posts from the Blog section
+            in the sidebar.
+          </span>
+        </span>
+      </label>
+
+      <div className="flex flex-col gap-3 rounded-md border border-current/15 p-4 text-sm">
+        <label className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            name="visionMissionEnabled"
+            defaultChecked={current.visionMissionEnabled}
+            className="mt-1"
+          />
+          <span>
+            <span className="font-medium">Show Vision &amp; Mission</span>
+            <span className="mt-1 block opacity-70">
+              Displays a Vision &amp; Mission section on the About page.
+            </span>
+          </span>
+        </label>
+        <label className="flex flex-col gap-1.5">
+          Vision
+          <textarea
+            name="visionText"
+            defaultValue={current.visionText}
+            rows={2}
+            className={field}
+          />
+        </label>
+        <label className="flex flex-col gap-1.5">
+          Mission
+          <textarea
+            name="missionText"
+            defaultValue={current.missionText}
+            rows={2}
+            className={field}
+          />
+        </label>
+      </div>
 
       {state.error && (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">

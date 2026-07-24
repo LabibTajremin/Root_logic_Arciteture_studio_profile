@@ -43,6 +43,11 @@ function siteSettings(tenant: string, verification: boolean): SiteSettings {
     navConfig: null,
     footer: null,
     editorVerificationRequired: verification,
+    blogEnabled: false,
+    visionMissionEnabled: false,
+    visionText: null,
+    missionText: null,
+    logoShowTitle: true,
   };
 }
 

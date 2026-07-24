@@ -12,6 +12,7 @@ import {
   getStats,
   getTestimonials,
   getValues,
+  groupServicesByCategory,
 } from '@/infrastructure/db/queries/publicQueries';
 import { Hero } from '@/presentation/components/public/Hero';
 import { FaqAccordion } from '@/presentation/components/public/FaqAccordion';
@@ -77,7 +78,7 @@ export default async function HomePage() {
       <ClientLogoWall clients={clients} />
       <PortfolioCategories categories={categories} />
       <FeaturedProjects projects={featured} />
-      <Services services={services} />
+      <Services services={groupServicesByCategory(services)} />
       <StatsBand stats={stats} />
       <CoreValues values={values} />
       <Team members={members} />

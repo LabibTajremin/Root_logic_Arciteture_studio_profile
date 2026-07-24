@@ -59,25 +59,53 @@ export function FeaturedProjects({ projects }: { projects: ProjectCardView[] }) 
   );
 }
 
-export function Services({
-  services,
-}: {
-  services: { id: string; title: string; excerpt: string | null }[];
-}) {
+export interface ServiceCategoryCard {
+  id: string;
+  title: string;
+  excerpt: string | null;
+  children: { id: string; title: string }[];
+}
+
+export function Services({ services }: { services: ServiceCategoryCard[] }) {
   if (!services.length) return null;
   return (
     <section className="border-y border-current/10">
       <div className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
-        <SectionHeading eyebrow="What we do" title="Services" />
+        <div className="flex items-end justify-between">
+          <SectionHeading eyebrow="What we do" title="Services" />
+          <Link
+            href="/services"
+            className="mb-10 hidden text-sm underline underline-offset-4 md:inline"
+          >
+            View all
+          </Link>
+        </div>
         <div className="grid grid-cols-1 gap-px sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service, i) => (
             <Reveal key={service.id} delayIndex={i % 3}>
               <div className="flex h-full flex-col gap-2 py-6 pr-6">
                 <h3 className="text-xl font-medium tracking-tight">{service.title}</h3>
                 {service.excerpt && <p className="opacity-70">{service.excerpt}</p>}
+                {service.children.length > 0 && (
+                  <ul className="mt-2 flex flex-wrap gap-2">
+                    {service.children.map((child) => (
+                      <li
+                        key={child.id}
+                        className="rounded-full border border-current/15 px-3 py-1 text-xs opacity-70"
+                      >
+                        {child.title}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </Reveal>
           ))}
+        </div>
+        <div className="mt-8 md:hidden">
+          <Link href="/services" className="text-sm underline underline-offset-4">
+            View all services
+          </Link>
         </div>
       </div>
     </section>

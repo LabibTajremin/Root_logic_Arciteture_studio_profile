@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { auth, signOut } from '@/infrastructure/auth/auth';
 import { getLicenceStatus } from '@/infrastructure/licence/licenceStatus';
+import { AdminNav } from '@/presentation/components/admin/AdminNav';
 
 export const metadata: Metadata = {
   title: 'Admin',
@@ -12,6 +13,9 @@ export const metadata: Metadata = {
 const NAV: { href: string; label: string; adminOnly?: boolean }[] = [
   { href: '/admin', label: 'Dashboard' },
   { href: '/admin/projects', label: 'Projects' },
+  { href: '/admin/services', label: 'Services', adminOnly: true },
+  { href: '/admin/blog', label: 'Blog', adminOnly: true },
+  { href: '/admin/members', label: 'Team', adminOnly: true },
   { href: '/admin/hero', label: 'Hero', adminOnly: true },
   { href: '/admin/approvals', label: 'Approvals', adminOnly: true },
   { href: '/admin/users', label: 'Users', adminOnly: true },
@@ -54,17 +58,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             View public site
             <span aria-hidden>↗</span>
           </Link>
-          <nav className="flex flex-wrap gap-2 md:flex-col">
-            {NAV.filter((item) => !item.adminOnly || role === 'admin').map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="rounded-md px-3 py-2 text-sm hover:bg-black/5 dark:hover:bg-white/10"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <AdminNav items={NAV.filter((item) => !item.adminOnly || role === 'admin')} />
           <form
             action={async () => {
               'use server';

@@ -32,6 +32,11 @@ export class DrizzleSiteSettingsRepository implements SiteSettingsRepository {
       navConfig: settings.navConfig,
       footer: settings.footer,
       editorVerificationRequired: settings.editorVerificationRequired,
+      blogEnabled: settings.blogEnabled,
+      visionMissionEnabled: settings.visionMissionEnabled,
+      visionText: settings.visionText,
+      missionText: settings.missionText,
+      logoShowTitle: settings.logoShowTitle,
       updatedAt: new Date(),
     };
     const [row] = await this.db
