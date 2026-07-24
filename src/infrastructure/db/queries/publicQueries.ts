@@ -1,4 +1,5 @@
-import { and, asc, desc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq, getTableColumns } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 import { getDb } from '@/infrastructure/db/client';
 import {
   awards,
@@ -46,9 +47,17 @@ export interface ProjectCardView {
 }
 
 export async function getSiteSettings(tenantId: string) {
+  const logoLight = alias(mediaAssets, 'logo_light');
+  const logoDark = alias(mediaAssets, 'logo_dark');
   const [row] = await getDb()
-    .select()
+    .select({
+      ...getTableColumns(siteSettings),
+      logoLightUrl: logoLight.url,
+      logoDarkUrl: logoDark.url,
+    })
     .from(siteSettings)
+    .leftJoin(logoLight, eq(logoLight.id, siteSettings.logoLightMediaId))
+    .leftJoin(logoDark, eq(logoDark.id, siteSettings.logoDarkMediaId))
     .where(eq(siteSettings.tenantId, tenantId))
     .limit(1);
   return row ?? null;

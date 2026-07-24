@@ -10,6 +10,30 @@ export interface NavItem {
   href: string;
 }
 
+function BrandMark({
+  studioName,
+  logoLightUrl,
+  logoDarkUrl,
+}: {
+  studioName: string;
+  logoLightUrl: string | null;
+  logoDarkUrl: string | null;
+}) {
+  if (!logoLightUrl && !logoDarkUrl) return <Logo />;
+  return (
+    <span className="inline-flex h-8 items-center">
+      {logoLightUrl && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={logoLightUrl} alt={studioName} className="tenant-logo-light h-8 w-auto" />
+      )}
+      {logoDarkUrl && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={logoDarkUrl} alt={studioName} className="tenant-logo-dark h-8 w-auto" />
+      )}
+    </span>
+  );
+}
+
 /**
  * Transparent-over-hero header that solidifies to a frosted bar on scroll. Mobile gets
  * a full-screen overlay menu with staggered links. Tap targets are >= 44px.
@@ -18,10 +42,14 @@ export function SiteHeader({
   studioName,
   nav,
   phone,
+  logoLightUrl = null,
+  logoDarkUrl = null,
 }: {
   studioName: string;
   nav: NavItem[];
   phone: string | null;
+  logoLightUrl?: string | null;
+  logoDarkUrl?: string | null;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -29,7 +57,11 @@ export function SiteHeader({
     <header className="sticky top-0 z-40 border-b border-current/10 bg-[var(--background)]/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:px-6">
         <Link href="/" aria-label={studioName}>
-          <Logo />
+          <BrandMark
+            studioName={studioName}
+            logoLightUrl={logoLightUrl}
+            logoDarkUrl={logoDarkUrl}
+          />
         </Link>
 
         <nav
@@ -88,7 +120,11 @@ export function SiteHeader({
       {open && (
         <div className="fixed inset-0 z-50 flex flex-col bg-[var(--background)] p-6 md:hidden">
           <div className="flex items-center justify-between">
-            <Logo />
+            <BrandMark
+              studioName={studioName}
+              logoLightUrl={logoLightUrl}
+              logoDarkUrl={logoDarkUrl}
+            />
             <span className="sr-only">{studioName}</span>
             <button
               type="button"

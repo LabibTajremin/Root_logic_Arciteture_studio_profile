@@ -45,6 +45,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 md:flex-row md:gap-10">
         <aside className="md:w-56 md:shrink-0">
           <p className="mb-4 text-xs uppercase tracking-widest opacity-60">Maapkathi Admin</p>
+          <Link
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mb-4 inline-flex min-h-9 items-center gap-1.5 rounded-md border border-current/15 px-3 text-sm hover:bg-current/5"
+          >
+            View public site
+            <span aria-hidden>↗</span>
+          </Link>
           <nav className="flex flex-wrap gap-2 md:flex-col">
             {NAV.filter((item) => !item.adminOnly || role === 'admin').map((item) => (
               <Link

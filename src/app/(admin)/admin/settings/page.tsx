@@ -13,6 +13,14 @@ export default async function SettingsPage() {
 
   const { repositories } = createContainer();
   const site = await repositories.site.get(actor.tenantId);
+  const [logoLight, logoDark] = await Promise.all([
+    site?.logoLightMediaId
+      ? repositories.media.findById(actor.tenantId, site.logoLightMediaId)
+      : null,
+    site?.logoDarkMediaId
+      ? repositories.media.findById(actor.tenantId, site.logoDarkMediaId)
+      : null,
+  ]);
 
   return (
     <section className="flex flex-col gap-6">
@@ -25,6 +33,10 @@ export default async function SettingsPage() {
           contactPhone: site?.contactPhone ?? '',
           address: site?.address ?? '',
           editorVerificationRequired: site?.editorVerificationRequired ?? true,
+          logoLightMediaId: site?.logoLightMediaId ?? '',
+          logoLightUrl: logoLight?.url ?? '',
+          logoDarkMediaId: site?.logoDarkMediaId ?? '',
+          logoDarkUrl: logoDark?.url ?? '',
         }}
       />
     </section>

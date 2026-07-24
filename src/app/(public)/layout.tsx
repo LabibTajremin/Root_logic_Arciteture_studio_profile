@@ -19,6 +19,8 @@ export default async function PublicLayout({ children }: { children: React.React
         studioName={site?.studioName ?? 'Maapkathi'}
         nav={nav}
         phone={site?.contactPhone ?? null}
+        logoLightUrl={site?.logoLightUrl ?? null}
+        logoDarkUrl={site?.logoDarkUrl ?? null}
       />
       <div className="relative z-10">{children}</div>
     </div>

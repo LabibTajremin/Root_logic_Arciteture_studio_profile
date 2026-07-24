@@ -37,6 +37,8 @@ export async function updateSettingsAction(
     contactPhone: (formData.get('contactPhone') as string) || null,
     address: (formData.get('address') as string) || null,
     editorVerificationRequired: formData.get('editorVerificationRequired') === 'on',
+    logoLightMediaId: (formData.get('logoLightMediaId') as string) || null,
+    logoDarkMediaId: (formData.get('logoDarkMediaId') as string) || null,
   });
 
   revalidatePath('/', 'layout');

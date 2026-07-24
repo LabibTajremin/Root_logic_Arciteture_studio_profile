@@ -22,6 +22,25 @@
   --logo-color: #0f6e6e;
 }
 
+/* Admin-uploaded tenant logo: swap light/dark variant by theme. */
+.tenant-logo-dark {
+  display: none;
+}
+:root[data-theme='dark'] .tenant-logo-light {
+  display: none;
+}
+:root[data-theme='dark'] .tenant-logo-dark {
+  display: inline-block;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .tenant-logo-light {
+    display: none;
+  }
+  :root:not([data-theme='light']) .tenant-logo-dark {
+    display: inline-block;
+  }
+}
+
 :root[data-theme='dark'] {
   --background: #0d0b0a;
   --foreground: #f2ece6;
