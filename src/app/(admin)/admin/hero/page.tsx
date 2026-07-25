@@ -19,6 +19,8 @@ export default async function HeroAdminPage() {
       eyebrow: heroSlides.eyebrow,
       headline: heroSlides.headline,
       kickerWord: heroSlides.kickerWord,
+      ctaLabel: heroSlides.ctaLabel,
+      ctaHref: heroSlides.ctaHref,
       isActive: heroSlides.isActive,
       imageUrl: mediaAssets.url,
     })

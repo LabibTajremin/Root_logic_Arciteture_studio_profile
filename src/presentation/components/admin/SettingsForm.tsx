@@ -22,6 +22,11 @@ export interface SettingsValues {
   visionText: string;
   missionText: string;
   logoShowTitle: boolean;
+  whatsapp: string;
+  socials: Record<string, string>;
+  seoTitle: string;
+  seoDescription: string;
+  gaId: string;
 }
 
 function LogoUploadField({
@@ -122,9 +127,49 @@ export function SettingsForm({ current }: { current: SettingsValues }) {
         <input name="contactPhone" defaultValue={current.contactPhone} className={field} />
       </label>
       <label className="flex flex-col gap-1.5 text-sm">
+        WhatsApp number
+        <input name="whatsapp" defaultValue={current.whatsapp} className={field} />
+      </label>
+      <label className="flex flex-col gap-1.5 text-sm">
         Address
         <input name="address" defaultValue={current.address} className={field} />
       </label>
+
+      <fieldset className="flex flex-col gap-3 rounded-md border border-current/15 p-4">
+        <legend className="px-1 text-sm font-medium">Social links</legend>
+        {(['instagram', 'facebook', 'linkedin', 'youtube'] as const).map((platform) => (
+          <label key={platform} className="flex flex-col gap-1.5 text-sm">
+            <span className="capitalize">{platform}</span>
+            <input
+              name={`social_${platform}`}
+              defaultValue={current.socials[platform] ?? ''}
+              placeholder="https://…"
+              className={field}
+            />
+          </label>
+        ))}
+      </fieldset>
+
+      <fieldset className="flex flex-col gap-3 rounded-md border border-current/15 p-4">
+        <legend className="px-1 text-sm font-medium">SEO</legend>
+        <label className="flex flex-col gap-1.5 text-sm">
+          Default page title
+          <input name="seoTitle" defaultValue={current.seoTitle} className={field} />
+        </label>
+        <label className="flex flex-col gap-1.5 text-sm">
+          Default meta description
+          <textarea
+            name="seoDescription"
+            defaultValue={current.seoDescription}
+            rows={2}
+            className={field}
+          />
+        </label>
+        <label className="flex flex-col gap-1.5 text-sm">
+          Google Analytics ID (e.g. G-XXXXXXX)
+          <input name="gaId" defaultValue={current.gaId} className={field} />
+        </label>
+      </fieldset>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <LogoUploadField

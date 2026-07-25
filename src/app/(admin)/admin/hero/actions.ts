@@ -72,6 +72,33 @@ export async function deleteHeroSlideAction(id: string): Promise<void> {
   revalidatePath('/');
 }
 
+export async function updateHeroTextAction(
+  id: string,
+  patch: {
+    eyebrow: string;
+    headline: string;
+    kickerWord: string;
+    ctaLabel: string;
+    ctaHref: string;
+  },
+): Promise<void> {
+  const actor = await requireAdmin();
+  if (!actor) return;
+  await getDb()
+    .update(heroSlides)
+    .set({
+      eyebrow: patch.eyebrow || null,
+      headline: patch.headline || 'Untitled',
+      kickerWord: patch.kickerWord || null,
+      ctaLabel: patch.ctaLabel || null,
+      ctaHref: patch.ctaHref || null,
+      updatedAt: new Date(),
+    })
+    .where(and(eq(heroSlides.tenantId, actor.tenantId), eq(heroSlides.id, id)));
+  revalidatePath('/admin/hero');
+  revalidatePath('/');
+}
+
 export async function setHeroImageAction(id: string, mediaId: string): Promise<void> {
   const actor = await requireAdmin();
   if (!actor) return;

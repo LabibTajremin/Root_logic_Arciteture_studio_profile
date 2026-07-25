@@ -1,6 +1,7 @@
 import { resolveActiveTenantId } from '@/infrastructure/auth/tenant';
 import { getSiteSettings } from '@/infrastructure/db/queries/publicQueries';
 import { SiteHeader, type NavItem } from '@/presentation/components/public/SiteHeader';
+import { SiteFooter } from '@/presentation/components/public/SiteFooter';
 
 function buildNav(blogEnabled: boolean): NavItem[] {
   const nav: NavItem[] = [
@@ -30,6 +31,14 @@ export default async function PublicLayout({ children }: { children: React.React
         logoShowTitle={site?.logoShowTitle ?? true}
       />
       <div className="relative z-10">{children}</div>
+      <SiteFooter
+        studioName={site?.studioName ?? 'Maapkathi'}
+        email={site?.contactEmail ?? null}
+        phone={site?.contactPhone ?? null}
+        whatsapp={site?.whatsapp ?? null}
+        address={site?.address ?? null}
+        socials={(site?.socials as Record<string, string> | undefined) ?? {}}
+      />
     </div>
   );
 }
