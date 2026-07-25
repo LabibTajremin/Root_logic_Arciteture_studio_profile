@@ -224,6 +224,90 @@ export function groupServicesByCategory(flat: ServiceFlatView[]): ServiceCategor
   }));
 }
 
+export interface ServiceDetailView {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  body: string | null;
+  iconUrl: string | null;
+  parentTitle: string | null;
+  parentSlug: string | null;
+  gallery: { id: string; url: string; altText: string | null }[];
+  siblings: { id: string; title: string; slug: string }[];
+}
+
+export async function getServiceBySlug(
+  tenantId: string,
+  slug: string,
+): Promise<ServiceDetailView | null> {
+  const icon = alias(mediaAssets, 'svc_icon');
+  const [row] = await getDb()
+    .select({
+      id: services.id,
+      title: services.title,
+      slug: services.slug,
+      excerpt: services.excerpt,
+      body: services.body,
+      parentId: services.parentId,
+      iconUrl: icon.url,
+    })
+    .from(services)
+    .leftJoin(icon, eq(icon.id, services.iconMediaId))
+    .where(
+      and(
+        eq(services.tenantId, tenantId),
+        eq(services.slug, slug),
+        eq(services.status, 'published'),
+      ),
+    )
+    .limit(1);
+  if (!row) return null;
+
+  const gallery = await getDb()
+    .select({ id: mediaAssets.id, url: mediaAssets.url, altText: mediaAssets.altText })
+    .from(mediaAssets)
+    .where(and(eq(mediaAssets.tenantId, tenantId), eq(mediaAssets.serviceId, row.id)))
+    .orderBy(asc(mediaAssets.sortOrder));
+
+  let parentTitle: string | null = null;
+  let parentSlug: string | null = null;
+  let siblings: { id: string; title: string; slug: string }[] = [];
+  if (row.parentId) {
+    const [parent] = await getDb()
+      .select({ title: services.title, slug: services.slug })
+      .from(services)
+      .where(and(eq(services.tenantId, tenantId), eq(services.id, row.parentId)))
+      .limit(1);
+    parentTitle = parent?.title ?? null;
+    parentSlug = parent?.slug ?? null;
+    siblings = await getDb()
+      .select({ id: services.id, title: services.title, slug: services.slug })
+      .from(services)
+      .where(
+        and(
+          eq(services.tenantId, tenantId),
+          eq(services.parentId, row.parentId),
+          eq(services.status, 'published'),
+        ),
+      )
+      .orderBy(asc(services.sortOrder));
+  }
+
+  return {
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
+    excerpt: row.excerpt,
+    body: row.body,
+    iconUrl: row.iconUrl,
+    parentTitle,
+    parentSlug,
+    gallery,
+    siblings,
+  };
+}
+
 export async function getStats(tenantId: string) {
   return getDb()
     .select({ id: stats.id, label: stats.label, value: stats.valueNumber, suffix: stats.suffix })

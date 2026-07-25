@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { resolveActiveTenantId } from '@/infrastructure/auth/tenant';
 import { getServices, groupServicesByCategory } from '@/infrastructure/db/queries/publicQueries';
 import { Reveal } from '@/presentation/components/public/Reveal';
@@ -52,18 +53,28 @@ export default async function ServicesPage() {
               {cat.children.length > 0 && (
                 <ul className="mt-6 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
                   {cat.children.map((child) => (
-                    <li key={child.id} className="rounded-md border border-current/10 p-4">
-                      {child.iconUrl && (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={child.iconUrl}
-                          alt=""
-                          aria-hidden
-                          className="service-icon mb-2 h-8 w-8 object-contain"
-                        />
-                      )}
-                      <h3 className="font-medium">{child.title}</h3>
-                      {child.excerpt && <p className="mt-1 text-sm opacity-70">{child.excerpt}</p>}
+                    <li key={child.id}>
+                      <Link
+                        href={`/services/${child.slug}`}
+                        className="group flex h-full flex-col rounded-md border border-current/10 p-4 transition-colors hover:border-current/40"
+                      >
+                        {child.iconUrl && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={child.iconUrl}
+                            alt=""
+                            aria-hidden
+                            className="service-icon mb-2 h-8 w-8 object-contain"
+                          />
+                        )}
+                        <h3 className="font-medium">{child.title}</h3>
+                        {child.excerpt && (
+                          <p className="mt-1 text-sm opacity-70">{child.excerpt}</p>
+                        )}
+                        <span className="mt-3 text-xs opacity-0 transition-opacity group-hover:opacity-60">
+                          View details →
+                        </span>
+                      </Link>
                     </li>
                   ))}
                 </ul>

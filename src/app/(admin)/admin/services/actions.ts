@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { and, eq } from 'drizzle-orm';
 import { getActor } from '@/infrastructure/auth/actor';
 import { getDb } from '@/infrastructure/db/client';
-import { services } from '@/infrastructure/db/schema';
+import { mediaAssets, services } from '@/infrastructure/db/schema';
 import { isReadOnly } from '@/infrastructure/licence/licenceStatus';
 import { RolePolicy } from '@/domain/services/RolePolicy';
 
@@ -68,15 +68,22 @@ export async function createServiceAction(
 
 export async function updateServiceAction(
   id: string,
-  patch: { title: string; excerpt: string },
+  patch: { title: string; excerpt: string; body?: string },
 ): Promise<void> {
   const actor = await requireAdmin();
   if (!actor) return;
+  const set: Record<string, unknown> = {
+    title: patch.title,
+    excerpt: patch.excerpt || null,
+    updatedAt: new Date(),
+  };
+  if (patch.body !== undefined) set.body = patch.body || null;
   await getDb()
     .update(services)
-    .set({ title: patch.title, excerpt: patch.excerpt || null, updatedAt: new Date() })
+    .set(set)
     .where(and(eq(services.tenantId, actor.tenantId), eq(services.id, id)));
   revalidatePath('/admin/services');
+  revalidatePath(`/admin/services/${id}`);
   revalidatePath('/services');
   revalidatePath('/');
 }
@@ -91,6 +98,28 @@ export async function setServiceIconAction(id: string, mediaId: string): Promise
   revalidatePath('/admin/services');
   revalidatePath('/services');
   revalidatePath('/');
+}
+
+/** Links an already-uploaded media asset to a service as a gallery image. */
+export async function addServiceImageAction(serviceId: string, mediaId: string): Promise<void> {
+  const actor = await requireAdmin();
+  if (!actor) return;
+  await getDb()
+    .update(mediaAssets)
+    .set({ serviceId, sortOrder: Date.now(), updatedAt: new Date() })
+    .where(and(eq(mediaAssets.tenantId, actor.tenantId), eq(mediaAssets.id, mediaId)));
+  revalidatePath(`/admin/services/${serviceId}`);
+  revalidatePath('/services');
+}
+
+export async function deleteServiceImageAction(serviceId: string, mediaId: string): Promise<void> {
+  const actor = await requireAdmin();
+  if (!actor) return;
+  await getDb()
+    .delete(mediaAssets)
+    .where(and(eq(mediaAssets.tenantId, actor.tenantId), eq(mediaAssets.id, mediaId)));
+  revalidatePath(`/admin/services/${serviceId}`);
+  revalidatePath('/services');
 }
 
 export async function toggleServicePublishedAction(id: string, published: boolean): Promise<void> {

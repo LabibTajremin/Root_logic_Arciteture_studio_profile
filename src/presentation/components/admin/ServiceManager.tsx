@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
@@ -131,6 +132,12 @@ function ServiceRowItem({ service, indent }: { service: ServiceRow; indent: bool
           >
             Edit
           </button>
+          <Link
+            href={`/admin/services/${service.id}`}
+            className="min-h-9 rounded-md border border-current/20 px-3 py-1.5 text-xs"
+          >
+            Page &amp; gallery
+          </Link>
           <button
             type="button"
             onClick={async () => {

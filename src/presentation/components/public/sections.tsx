@@ -64,7 +64,7 @@ export interface ServiceCategoryCard {
   title: string;
   excerpt: string | null;
   iconUrl: string | null;
-  children: { id: string; title: string }[];
+  children: { id: string; title: string; slug: string }[];
 }
 
 export function Services({ services }: { services: ServiceCategoryCard[] }) {
@@ -99,11 +99,13 @@ export function Services({ services }: { services: ServiceCategoryCard[] }) {
                 {service.children.length > 0 && (
                   <ul className="mt-1 flex flex-wrap gap-2">
                     {service.children.map((child) => (
-                      <li
-                        key={child.id}
-                        className="rounded-full border border-current/15 px-3 py-1 text-xs opacity-70"
-                      >
-                        {child.title}
+                      <li key={child.id}>
+                        <Link
+                          href={`/services/${child.slug}`}
+                          className="inline-block rounded-full border border-current/15 px-3 py-1 text-xs opacity-70 transition-opacity hover:opacity-100"
+                        >
+                          {child.title}
+                        </Link>
                       </li>
                     ))}
                   </ul>
