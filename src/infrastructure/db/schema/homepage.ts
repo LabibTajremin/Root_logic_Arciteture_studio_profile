@@ -39,6 +39,7 @@ export const services = pgTable(
     title: text('title').notNull(),
     slug: text('slug').notNull(),
     iconMediaId: uuid('icon_media_id'),
+    coverMediaId: uuid('cover_media_id'),
     excerpt: text('excerpt'),
     body: text('body'),
     parentId: uuid('parent_id'),

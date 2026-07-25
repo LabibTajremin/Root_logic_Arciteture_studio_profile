@@ -182,9 +182,12 @@ export interface ServiceFlatView {
   excerpt: string | null;
   parentId: string | null;
   iconUrl: string | null;
+  coverUrl: string | null;
 }
 
 export async function getServices(tenantId: string): Promise<ServiceFlatView[]> {
+  const icon = alias(mediaAssets, 'svc_list_icon');
+  const cover = alias(mediaAssets, 'svc_list_cover');
   return getDb()
     .select({
       id: services.id,
@@ -192,10 +195,12 @@ export async function getServices(tenantId: string): Promise<ServiceFlatView[]> 
       slug: services.slug,
       excerpt: services.excerpt,
       parentId: services.parentId,
-      iconUrl: mediaAssets.url,
+      iconUrl: icon.url,
+      coverUrl: cover.url,
     })
     .from(services)
-    .leftJoin(mediaAssets, eq(mediaAssets.id, services.iconMediaId))
+    .leftJoin(icon, eq(icon.id, services.iconMediaId))
+    .leftJoin(cover, eq(cover.id, services.coverMediaId))
     .where(and(eq(services.tenantId, tenantId), eq(services.status, 'published')))
     .orderBy(asc(services.sortOrder));
 }
@@ -206,12 +211,14 @@ export interface ServiceCategoryView {
   slug: string;
   excerpt: string | null;
   iconUrl: string | null;
+  coverUrl: string | null;
   children: {
     id: string;
     title: string;
     slug: string;
     excerpt: string | null;
     iconUrl: string | null;
+    coverUrl: string | null;
   }[];
 }
 
@@ -231,6 +238,7 @@ export interface ServiceDetailView {
   excerpt: string | null;
   body: string | null;
   iconUrl: string | null;
+  coverUrl: string | null;
   parentTitle: string | null;
   parentSlug: string | null;
   gallery: { id: string; url: string; altText: string | null }[];
@@ -242,6 +250,7 @@ export async function getServiceBySlug(
   slug: string,
 ): Promise<ServiceDetailView | null> {
   const icon = alias(mediaAssets, 'svc_icon');
+  const cover = alias(mediaAssets, 'svc_cover');
   const [row] = await getDb()
     .select({
       id: services.id,
@@ -251,9 +260,11 @@ export async function getServiceBySlug(
       body: services.body,
       parentId: services.parentId,
       iconUrl: icon.url,
+      coverUrl: cover.url,
     })
     .from(services)
     .leftJoin(icon, eq(icon.id, services.iconMediaId))
+    .leftJoin(cover, eq(cover.id, services.coverMediaId))
     .where(
       and(
         eq(services.tenantId, tenantId),
@@ -301,6 +312,7 @@ export async function getServiceBySlug(
     excerpt: row.excerpt,
     body: row.body,
     iconUrl: row.iconUrl,
+    coverUrl: row.coverUrl,
     parentTitle,
     parentSlug,
     gallery,

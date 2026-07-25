@@ -56,24 +56,38 @@ export default async function ServicesPage() {
                     <li key={child.id}>
                       <Link
                         href={`/services/${child.slug}`}
-                        className="group flex h-full flex-col rounded-md border border-current/10 p-4 transition-colors hover:border-current/40"
+                        className="group flex h-full flex-col overflow-hidden rounded-md border border-current/10 transition-colors hover:border-current/40"
                       >
-                        {child.iconUrl && (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={child.iconUrl}
-                            alt=""
-                            aria-hidden
-                            className="service-icon mb-2 h-8 w-8 object-contain"
-                          />
-                        )}
-                        <h3 className="font-medium">{child.title}</h3>
-                        {child.excerpt && (
-                          <p className="mt-1 text-sm opacity-70">{child.excerpt}</p>
-                        )}
-                        <span className="mt-3 text-xs opacity-0 transition-opacity group-hover:opacity-60">
-                          View details →
-                        </span>
+                        {child.coverUrl ? (
+                          <div className="aspect-[16/9] w-full overflow-hidden bg-current/5">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={child.coverUrl}
+                              alt=""
+                              aria-hidden
+                              loading="lazy"
+                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                          </div>
+                        ) : null}
+                        <div className="flex flex-1 flex-col p-4">
+                          {child.iconUrl && !child.coverUrl && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={child.iconUrl}
+                              alt=""
+                              aria-hidden
+                              className="service-icon mb-2 h-8 w-8 object-contain"
+                            />
+                          )}
+                          <h3 className="font-medium">{child.title}</h3>
+                          {child.excerpt && (
+                            <p className="mt-1 text-sm opacity-70">{child.excerpt}</p>
+                          )}
+                          <span className="mt-3 text-xs opacity-0 transition-opacity group-hover:opacity-60">
+                            View details →
+                          </span>
+                        </div>
                       </Link>
                     </li>
                   ))}

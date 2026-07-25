@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import {
   addServiceImageAction,
   deleteServiceImageAction,
+  setServiceCoverAction,
   updateServiceAction,
 } from '@/app/(admin)/admin/services/actions';
 
@@ -15,6 +16,7 @@ export interface EditorService {
   excerpt: string | null;
   body: string | null;
   parentId: string | null;
+  coverUrl: string | null;
 }
 
 export interface GalleryImage {
@@ -39,6 +41,21 @@ export function ServiceEditor({
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [coverUploading, setCoverUploading] = useState(false);
+
+  async function uploadCover(file: File) {
+    setCoverUploading(true);
+    const form = new FormData();
+    form.set('file', file);
+    form.set('altText', service.title);
+    const res = await fetch('/api/admin/upload', { method: 'POST', body: form });
+    if (res.ok) {
+      const { media } = (await res.json()) as { media: { id: string } };
+      await setServiceCoverAction(service.id, media.id);
+    }
+    setCoverUploading(false);
+    router.refresh();
+  }
 
   async function save() {
     setSaving(true);
@@ -68,6 +85,31 @@ export function ServiceEditor({
   return (
     <div className="flex max-w-3xl flex-col gap-6">
       <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1.5 text-sm">
+          <span>Cover photo (shown at the top of the service page)</span>
+          <div className="flex items-center gap-3">
+            <div className="relative aspect-video w-40 shrink-0 overflow-hidden rounded-md bg-current/5">
+              {service.coverUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={service.coverUrl} alt="" className="h-full w-full object-cover" />
+              )}
+            </div>
+            <label className="min-h-11 cursor-pointer rounded-md border border-current/20 px-3 py-2 text-sm">
+              {coverUploading ? 'Uploading…' : service.coverUrl ? 'Replace cover' : 'Upload cover'}
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) void uploadCover(f);
+                  e.target.value = '';
+                }}
+              />
+            </label>
+          </div>
+          <p className="text-xs opacity-60">Recommended ratio 16:9.</p>
+        </div>
         <label className="flex flex-col gap-1.5 text-sm">
           Title
           <input value={title} onChange={(e) => setTitle(e.target.value)} className={field} />

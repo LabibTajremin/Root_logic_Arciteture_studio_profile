@@ -44,6 +44,13 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
         <span className="opacity-100">{service.title}</span>
       </nav>
 
+      {service.coverUrl && (
+        <div className="mb-10 aspect-[16/7] w-full overflow-hidden rounded-[var(--radius)] bg-current/5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={service.coverUrl} alt={service.title} className="h-full w-full object-cover" />
+        </div>
+      )}
+
       <header className="mb-12 flex flex-col gap-4">
         {service.iconUrl && (
           // eslint-disable-next-line @next/next/no-img-element

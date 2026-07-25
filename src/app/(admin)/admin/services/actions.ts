@@ -100,6 +100,18 @@ export async function setServiceIconAction(id: string, mediaId: string): Promise
   revalidatePath('/');
 }
 
+export async function setServiceCoverAction(id: string, mediaId: string): Promise<void> {
+  const actor = await requireAdmin();
+  if (!actor) return;
+  await getDb()
+    .update(services)
+    .set({ coverMediaId: mediaId, updatedAt: new Date() })
+    .where(and(eq(services.tenantId, actor.tenantId), eq(services.id, id)));
+  revalidatePath(`/admin/services/${id}`);
+  revalidatePath('/services');
+  revalidatePath('/');
+}
+
 /** Links an already-uploaded media asset to a service as a gallery image. */
 export async function addServiceImageAction(serviceId: string, mediaId: string): Promise<void> {
   const actor = await requireAdmin();

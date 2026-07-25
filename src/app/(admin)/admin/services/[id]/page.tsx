@@ -23,8 +23,11 @@ export default async function ServiceEditorPage({ params }: { params: Promise<{ 
       excerpt: services.excerpt,
       body: services.body,
       parentId: services.parentId,
+      coverMediaId: services.coverMediaId,
+      coverUrl: mediaAssets.url,
     })
     .from(services)
+    .leftJoin(mediaAssets, eq(mediaAssets.id, services.coverMediaId))
     .where(and(eq(services.tenantId, actor.tenantId), eq(services.id, id)))
     .limit(1);
 
