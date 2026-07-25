@@ -12,7 +12,7 @@ export function AdminNav({ items }: { items: AdminNavItem[] }) {
   const pathname = usePathname();
 
   return (
-    <nav className="flex flex-wrap gap-2 md:flex-col">
+    <nav className="flex flex-wrap gap-1 md:flex-col">
       {items.map((item) => {
         const active =
           item.href === '/admin' ? pathname === '/admin' : pathname.startsWith(item.href);
@@ -21,10 +21,10 @@ export function AdminNav({ items }: { items: AdminNavItem[] }) {
             key={item.href}
             href={item.href}
             aria-current={active ? 'page' : undefined}
-            className={`rounded-md px-3 py-2 text-sm transition-colors ${
+            className={`rounded-lg px-3 py-2 text-sm transition-all duration-150 ${
               active
-                ? 'bg-[var(--accent)] font-medium text-[var(--accent-foreground)]'
-                : 'hover:bg-black/5 dark:hover:bg-white/10'
+                ? 'bg-[var(--accent-foreground)] font-semibold text-[var(--accent)] shadow-sm'
+                : 'text-[var(--accent-foreground)]/85 hover:bg-[var(--accent-foreground)]/12 hover:text-[var(--accent-foreground)]'
             }`}
           >
             {item.label}
