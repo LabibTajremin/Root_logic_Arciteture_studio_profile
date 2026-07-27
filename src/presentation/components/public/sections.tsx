@@ -283,15 +283,7 @@ export function AwardsList({
   );
 }
 
-export function ContactBand({
-  studioName,
-  email,
-  phone,
-}: {
-  studioName: string;
-  email: string | null;
-  phone: string | null;
-}) {
+export function ContactBand({ email, phone }: { email: string | null; phone: string | null }) {
   return (
     <section className="mx-auto max-w-6xl px-4 py-20 md:px-6 md:py-28">
       <Reveal>
@@ -315,9 +307,6 @@ export function ContactBand({
           )}
           {phone && <span className="text-sm opacity-70">{phone}</span>}
         </div>
-        <p className="mt-16 text-sm opacity-50">
-          © {new Date().getFullYear()} {studioName}
-        </p>
       </Reveal>
     </section>
   );

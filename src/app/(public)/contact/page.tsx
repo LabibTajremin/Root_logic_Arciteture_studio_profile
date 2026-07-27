@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'Contact',
   description: 'Get in touch to discuss your project.',
+  alternates: { canonical: '/contact' },
 };
 
 export default async function ContactPage() {

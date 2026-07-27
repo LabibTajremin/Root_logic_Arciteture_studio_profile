@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { resolveActiveTenantId } from '@/infrastructure/auth/tenant';
 import {
   getActiveHeroSlides,
@@ -8,6 +9,7 @@ import {
   getFeaturedProjects,
   getPublishedMembers,
   getServices,
+  getSeoSettings,
   getSiteSettings,
   getStats,
   getTestimonials,
@@ -30,6 +32,19 @@ import {
 } from '@/presentation/components/public/sections';
 
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const tenantId = await resolveActiveTenantId();
+  if (!tenantId) return {};
+  const [site, seo] = await Promise.all([getSiteSettings(tenantId), getSeoSettings(tenantId)]);
+  const studioName = site?.studioName ?? 'Maapkathi';
+  const description = seo?.defaultDescription ?? site?.tagline ?? undefined;
+  return {
+    title: { absolute: site?.tagline ? `${studioName} — ${site.tagline}` : studioName },
+    description,
+    alternates: { canonical: '/' },
+  };
+}
 
 export default async function HomePage() {
   const tenantId = await resolveActiveTenantId();
@@ -84,11 +99,7 @@ export default async function HomePage() {
       <Testimonials testimonials={testimonials} />
       <AwardsList awards={awards} />
       <FaqAccordion faqs={faqs} />
-      <ContactBand
-        studioName={site?.studioName ?? 'Maapkathi'}
-        email={site?.contactEmail ?? null}
-        phone={site?.contactPhone ?? null}
-      />
+      <ContactBand email={site?.contactEmail ?? null} phone={site?.contactPhone ?? null} />
     </main>
   );
 }
