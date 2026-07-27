@@ -16,6 +16,7 @@ export const mediaAssets = pgTable(
     id: idColumn(),
     tenantId: tenantIdColumn(),
     projectId: uuid('project_id'),
+    serviceId: uuid('service_id'),
     type: text('type').notNull().default('image'),
     // Numeric storage-driver code recorded per asset so driver migration keeps files.
     storageDriver: smallint('storage_driver').notNull(),
@@ -33,6 +34,7 @@ export const mediaAssets = pgTable(
   },
   (t) => [
     index('idx_media_tenant_project_sort').on(t.tenantId, t.projectId, t.sortOrder),
+    index('idx_media_tenant_service_sort').on(t.tenantId, t.serviceId, t.sortOrder),
     index('idx_media_tenant_type').on(t.tenantId, t.type),
     index('idx_media_status').on(t.status),
   ],

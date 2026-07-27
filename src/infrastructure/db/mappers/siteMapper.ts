@@ -19,5 +19,10 @@ export function toSiteSettings(row: SiteRow): SiteSettings {
     navConfig: row.navConfig,
     footer: row.footer,
     editorVerificationRequired: row.editorVerificationRequired,
+    blogEnabled: row.blogEnabled,
+    visionMissionEnabled: row.visionMissionEnabled,
+    visionText: row.visionText,
+    missionText: row.missionText,
+    logoShowTitle: row.logoShowTitle,
   };
 }

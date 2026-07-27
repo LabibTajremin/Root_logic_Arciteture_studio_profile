@@ -14,4 +14,9 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   navConfig: null,
   footer: null,
   editorVerificationRequired: true,
+  blogEnabled: false,
+  visionMissionEnabled: false,
+  visionText: null,
+  missionText: null,
+  logoShowTitle: true,
 };

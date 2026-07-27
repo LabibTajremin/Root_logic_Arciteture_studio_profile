@@ -14,8 +14,8 @@ export interface SiteFooterProps {
   studioName: string;
   tagline: string | null;
   nav: NavItem[];
-  contactEmail: string | null;
-  contactPhone: string | null;
+  email: string | null;
+  phone: string | null;
   whatsapp: string | null;
   address: string | null;
   socials: Readonly<Record<string, string>>;
@@ -30,8 +30,8 @@ export function SiteFooter({
   studioName,
   tagline,
   nav,
-  contactEmail,
-  contactPhone,
+  email,
+  phone,
   whatsapp,
   address,
   socials,
@@ -45,13 +45,13 @@ export function SiteFooter({
     name: studioName,
     ...(tagline ? { description: tagline } : {}),
     ...(address ? { address: { '@type': 'PostalAddress', streetAddress: address } } : {}),
-    ...(contactEmail || contactPhone
+    ...(email || phone
       ? {
           contactPoint: {
             '@type': 'ContactPoint',
             contactType: 'customer service',
-            ...(contactEmail ? { email: contactEmail } : {}),
-            ...(contactPhone ? { telephone: contactPhone } : {}),
+            ...(email ? { email } : {}),
+            ...(phone ? { telephone: phone } : {}),
           },
         }
       : {}),
@@ -91,20 +91,20 @@ export function SiteFooter({
 
         <div className="flex flex-col gap-3">
           <p className="text-xs uppercase tracking-[0.2em] opacity-50">Contact</p>
-          {contactEmail && (
+          {email && (
             <a
-              href={`mailto:${contactEmail}`}
+              href={`mailto:${email}`}
               className="inline-flex min-h-11 items-center text-sm opacity-80 hover:opacity-100 sm:min-h-0"
             >
-              {contactEmail}
+              {email}
             </a>
           )}
-          {contactPhone && (
+          {phone && (
             <a
-              href={`tel:${contactPhone.replace(/\s/g, '')}`}
+              href={`tel:${phone.replace(/\s/g, '')}`}
               className="inline-flex min-h-11 items-center text-sm opacity-80 hover:opacity-100 sm:min-h-0"
             >
-              {contactPhone}
+              {phone}
             </a>
           )}
           {whatsapp && (
@@ -139,8 +139,11 @@ export function SiteFooter({
       </div>
 
       <div className="border-t border-current/10">
-        <div className="mx-auto max-w-6xl px-4 py-6 text-xs opacity-50 md:px-6">
-          © {year} {studioName}. All rights reserved.
+        <div className="mx-auto max-w-6xl px-4 py-6 text-center text-xs opacity-50 md:px-6">
+          © {year} {studioName}. ·{' '}
+          <Link href="/contact" className="hover:opacity-100">
+            Get in touch
+          </Link>
         </div>
       </div>
     </footer>

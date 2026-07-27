@@ -1,10 +1,11 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { loginAction } from '@/app/login/actions';
 
 export function LoginForm() {
   const [error, formAction, pending] = useActionState(loginAction, null);
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <form action={formAction} className="flex w-full max-w-sm flex-col gap-4">
@@ -25,14 +26,24 @@ export function LoginForm() {
         <label htmlFor="password" className="text-sm font-medium">
           Password
         </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          className="min-h-11 rounded-md border border-black/15 bg-transparent px-3 py-2 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] dark:border-white/20"
-        />
+        <div className="relative">
+          <input
+            id="password"
+            name="password"
+            type={showPassword ? 'text' : 'password'}
+            autoComplete="current-password"
+            required
+            className="min-h-11 w-full rounded-md border border-black/15 bg-transparent px-3 py-2 pr-16 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] dark:border-white/20"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((s) => !s)}
+            aria-pressed={showPassword}
+            className="absolute inset-y-0 right-2 my-auto h-7 rounded px-2 text-xs opacity-70 hover:opacity-100"
+          >
+            {showPassword ? 'Hide' : 'Show'}
+          </button>
+        </div>
       </div>
 
       {error && (

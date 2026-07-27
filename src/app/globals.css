@@ -17,6 +17,38 @@
   --radius: 6px;
   --font-headings: Georgia, serif;
   --font-body: system-ui, sans-serif;
+
+  /* Maapkathi wordmark: teal in light mode, white in dark mode. */
+  --logo-color: #0f6e6e;
+}
+
+/* Monochrome service icons: invert dark line-art to light in dark mode. */
+:root[data-theme='dark'] .service-icon {
+  filter: invert(1) brightness(1.6);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .service-icon {
+    filter: invert(1) brightness(1.6);
+  }
+}
+
+/* Admin-uploaded tenant logo: swap light/dark variant by theme. */
+.tenant-logo-dark {
+  display: none;
+}
+:root[data-theme='dark'] .tenant-logo-light {
+  display: none;
+}
+:root[data-theme='dark'] .tenant-logo-dark {
+  display: inline-block;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .tenant-logo-light {
+    display: none;
+  }
+  :root:not([data-theme='light']) .tenant-logo-dark {
+    display: inline-block;
+  }
 }
 
 :root[data-theme='dark'] {
@@ -24,6 +56,7 @@
   --foreground: #f2ece6;
   --accent: #c04a57;
   --accent-foreground: #0d0b0a;
+  --logo-color: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -32,6 +65,7 @@
     --foreground: #f2ece6;
     --accent: #c04a57;
     --accent-foreground: #0d0b0a;
+    --logo-color: #ffffff;
   }
 }
 

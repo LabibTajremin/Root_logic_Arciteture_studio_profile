@@ -59,25 +59,65 @@ export function FeaturedProjects({ projects }: { projects: ProjectCardView[] }) 
   );
 }
 
-export function Services({
-  services,
-}: {
-  services: { id: string; title: string; excerpt: string | null }[];
-}) {
+export interface ServiceCategoryCard {
+  id: string;
+  title: string;
+  excerpt: string | null;
+  iconUrl: string | null;
+  children: { id: string; title: string; slug: string }[];
+}
+
+export function Services({ services }: { services: ServiceCategoryCard[] }) {
   if (!services.length) return null;
   return (
     <section className="border-y border-current/10">
       <div className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
-        <SectionHeading eyebrow="What we do" title="Services" />
-        <div className="grid grid-cols-1 gap-px sm:grid-cols-2 lg:grid-cols-3">
+        <div className="flex items-end justify-between">
+          <SectionHeading eyebrow="What we do" title="Services" />
+          <Link
+            href="/services"
+            className="mb-10 hidden text-sm underline underline-offset-4 md:inline"
+          >
+            View all
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service, i) => (
             <Reveal key={service.id} delayIndex={i % 3}>
-              <div className="flex h-full flex-col gap-2 py-6 pr-6">
+              <div className="flex h-full flex-col gap-3">
+                {service.iconUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={service.iconUrl}
+                    alt=""
+                    aria-hidden
+                    className="service-icon h-12 w-12 object-contain"
+                  />
+                )}
                 <h3 className="text-xl font-medium tracking-tight">{service.title}</h3>
                 {service.excerpt && <p className="opacity-70">{service.excerpt}</p>}
+                {service.children.length > 0 && (
+                  <ul className="mt-1 flex flex-wrap gap-2">
+                    {service.children.map((child) => (
+                      <li key={child.id}>
+                        <Link
+                          href={`/services/${child.slug}`}
+                          className="inline-block rounded-full border border-current/15 px-3 py-1 text-xs opacity-70 transition-opacity hover:opacity-100"
+                        >
+                          {child.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </Reveal>
           ))}
+        </div>
+        <div className="mt-8 md:hidden">
+          <Link href="/services" className="text-sm underline underline-offset-4">
+            View all services
+          </Link>
         </div>
       </div>
     </section>
@@ -145,7 +185,13 @@ export function Team({
 export function Testimonials({
   testimonials,
 }: {
-  testimonials: { id: string; authorName: string; company: string | null; quote: string }[];
+  testimonials: {
+    id: string;
+    authorName: string;
+    company: string | null;
+    quote: string;
+    avatarUrl?: string | null;
+  }[];
 }) {
   if (!testimonials.length) return null;
   return (
@@ -155,16 +201,22 @@ export function Testimonials({
         <div className="flex flex-col gap-12">
           {testimonials.map((t) => (
             <Reveal key={t.id}>
-              <figure className="flex flex-col gap-4">
+              <figure className="flex flex-col items-center gap-4">
                 <blockquote
                   className="text-[clamp(1.3rem,3vw,2rem)] font-light leading-snug"
                   style={{ fontFamily: 'var(--font-headings)' }}
                 >
                   “{t.quote}”
                 </blockquote>
-                <figcaption className="text-sm opacity-70">
-                  {t.authorName}
-                  {t.company ? `, ${t.company}` : ''}
+                <figcaption className="flex items-center gap-3 text-sm opacity-70">
+                  {t.avatarUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={t.avatarUrl} alt="" className="h-10 w-10 rounded-full object-cover" />
+                  )}
+                  <span>
+                    {t.authorName}
+                    {t.company ? `, ${t.company}` : ''}
+                  </span>
                 </figcaption>
               </figure>
             </Reveal>
@@ -175,26 +227,73 @@ export function Testimonials({
   );
 }
 
-export function ClientLogoWall({ clients }: { clients: { id: string; name: string }[] }) {
+// Deterministic accent per client so the wordmarks read as distinct brands
+// without needing real logo artwork.
+const LOGO_HUES = [162, 200, 20, 260, 320, 40];
+
+function clientInitials(name: string) {
+  const words = name.trim().split(/\s+/);
+  return ((words[0]?.[0] ?? '') + (words[1]?.[0] ?? '')).toUpperCase();
+}
+
+function ClientLetterMark({ name, index }: { name: string; index: number }) {
+  const hue = LOGO_HUES[index % LOGO_HUES.length];
+  return (
+    <div
+      className="flex h-14 items-center justify-center gap-2 rounded-md border border-current/10 px-3 text-sm font-semibold tracking-tight opacity-70 transition-opacity hover:opacity-100"
+      title={name}
+    >
+      <span
+        aria-hidden
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white"
+        style={{ backgroundColor: `hsl(${hue} 45% 38%)` }}
+      >
+        {clientInitials(name)}
+      </span>
+      <span className="truncate">{name}</span>
+    </div>
+  );
+}
+
+export function ClientLogoWall({
+  clients,
+}: {
+  clients: { id: string; name: string; logoUrl?: string | null }[];
+}) {
   if (!clients.length) return null;
   return (
     <section className="border-y border-current/10">
       <div className="mx-auto max-w-6xl px-4 py-12 md:px-6">
         <p className="mb-6 text-center text-xs uppercase tracking-[0.2em] opacity-50">Trusted by</p>
         <div className="grid grid-cols-2 items-center gap-6 sm:grid-cols-3 md:grid-cols-6">
-          {clients.map((c) => (
-            <div
-              key={c.id}
-              className="flex h-14 items-center justify-center rounded-md border border-current/10 text-sm opacity-60 transition-opacity hover:opacity-100"
-            >
-              {c.name}
-            </div>
-          ))}
+          {clients.map((c, i) =>
+            c.logoUrl ? (
+              <div
+                key={c.id}
+                className="flex h-14 items-center justify-center rounded-md border border-current/10 px-3"
+                title={c.name}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={c.logoUrl} alt={c.name} className="max-h-8 w-auto object-contain" />
+              </div>
+            ) : (
+              <ClientLetterMark key={c.id} name={c.name} index={i} />
+            ),
+          )}
         </div>
       </div>
     </section>
   );
 }
+
+// Category-flavoured cover photos (CC0, StockSnap.io) so the demo portfolio
+// cards read as real project categories rather than empty tiles.
+const CATEGORY_COVER_IMAGES: Record<string, string> = {
+  residential: 'https://cdn.stocksnap.io/img-thumbs/960w/HIH67XC5G0.jpg',
+  commercial: 'https://cdn.stocksnap.io/img-thumbs/960w/QUU0AQABSN.jpg',
+  hospitality: 'https://cdn.stocksnap.io/img-thumbs/960w/SX2H0BU5EG.jpg',
+};
+const DEFAULT_CATEGORY_COVER = 'https://cdn.stocksnap.io/img-thumbs/960w/TQNWBTLHLY.jpg';
 
 export function PortfolioCategories({
   categories,
@@ -212,15 +311,24 @@ export function PortfolioCategories({
               href={`/work`}
               className="group relative flex aspect-[4/3] flex-col justify-between overflow-hidden rounded-[var(--radius)] border border-current/10 p-6"
             >
-              <span className="text-sm opacity-40">{String(i + 1).padStart(2, '0')}</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={CATEGORY_COVER_IMAGES[cat.slug] ?? DEFAULT_CATEGORY_COVER}
+                alt=""
+                aria-hidden
+                loading="lazy"
+                className="absolute inset-0 -z-20 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <span className="absolute inset-0 -z-10 bg-black/45" aria-hidden />
+              <span className="text-sm text-white/70">{String(i + 1).padStart(2, '0')}</span>
               <span
-                className="text-2xl font-medium tracking-tight"
+                className="text-2xl font-medium tracking-tight text-white"
                 style={{ fontFamily: 'var(--font-headings)' }}
               >
                 {cat.name}
               </span>
               <span
-                className="absolute inset-0 -z-10 bg-[var(--accent)] opacity-0 transition-opacity group-hover:opacity-10"
+                className="absolute inset-0 -z-10 bg-[var(--accent)] opacity-0 transition-opacity group-hover:opacity-20"
                 aria-hidden
               />
             </Link>

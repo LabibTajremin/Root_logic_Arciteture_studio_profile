@@ -1,4 +1,5 @@
-import { and, asc, desc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq, getTableColumns } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 import { getDb } from '@/infrastructure/db/client';
 import {
   awards,
@@ -8,6 +9,7 @@ import {
   heroSlides,
   mediaAssets,
   members,
+  posts,
   projects,
   seoSettings,
   services,
@@ -47,9 +49,17 @@ export interface ProjectCardView {
 }
 
 export async function getSiteSettings(tenantId: string) {
+  const logoLight = alias(mediaAssets, 'logo_light');
+  const logoDark = alias(mediaAssets, 'logo_dark');
   const [row] = await getDb()
-    .select()
+    .select({
+      ...getTableColumns(siteSettings),
+      logoLightUrl: logoLight.url,
+      logoDarkUrl: logoDark.url,
+    })
     .from(siteSettings)
+    .leftJoin(logoLight, eq(logoLight.id, siteSettings.logoLightMediaId))
+    .leftJoin(logoDark, eq(logoDark.id, siteSettings.logoDarkMediaId))
     .where(eq(siteSettings.tenantId, tenantId))
     .limit(1);
   return row ?? null;
@@ -185,17 +195,149 @@ export async function getPublishedProjects(tenantId: string): Promise<ProjectCar
   return rows.map(toCard);
 }
 
-export async function getServices(tenantId: string) {
+export interface ServiceFlatView {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  parentId: string | null;
+  iconUrl: string | null;
+  coverUrl: string | null;
+}
+
+export async function getServices(tenantId: string): Promise<ServiceFlatView[]> {
+  const icon = alias(mediaAssets, 'svc_list_icon');
+  const cover = alias(mediaAssets, 'svc_list_cover');
   return getDb()
     .select({
       id: services.id,
       title: services.title,
       slug: services.slug,
       excerpt: services.excerpt,
+      parentId: services.parentId,
+      iconUrl: icon.url,
+      coverUrl: cover.url,
     })
     .from(services)
+    .leftJoin(icon, eq(icon.id, services.iconMediaId))
+    .leftJoin(cover, eq(cover.id, services.coverMediaId))
     .where(and(eq(services.tenantId, tenantId), eq(services.status, 'published')))
     .orderBy(asc(services.sortOrder));
+}
+
+export interface ServiceCategoryView {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  iconUrl: string | null;
+  coverUrl: string | null;
+  children: {
+    id: string;
+    title: string;
+    slug: string;
+    excerpt: string | null;
+    iconUrl: string | null;
+    coverUrl: string | null;
+  }[];
+}
+
+/** Nests flat services into top-level categories with their sub-services. */
+export function groupServicesByCategory(flat: ServiceFlatView[]): ServiceCategoryView[] {
+  const topLevel = flat.filter((s) => !s.parentId);
+  return topLevel.map((top) => ({
+    ...top,
+    children: flat.filter((s) => s.parentId === top.id),
+  }));
+}
+
+export interface ServiceDetailView {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  body: string | null;
+  iconUrl: string | null;
+  coverUrl: string | null;
+  parentTitle: string | null;
+  parentSlug: string | null;
+  gallery: { id: string; url: string; altText: string | null }[];
+  siblings: { id: string; title: string; slug: string }[];
+}
+
+export async function getServiceBySlug(
+  tenantId: string,
+  slug: string,
+): Promise<ServiceDetailView | null> {
+  const icon = alias(mediaAssets, 'svc_icon');
+  const cover = alias(mediaAssets, 'svc_cover');
+  const [row] = await getDb()
+    .select({
+      id: services.id,
+      title: services.title,
+      slug: services.slug,
+      excerpt: services.excerpt,
+      body: services.body,
+      parentId: services.parentId,
+      iconUrl: icon.url,
+      coverUrl: cover.url,
+    })
+    .from(services)
+    .leftJoin(icon, eq(icon.id, services.iconMediaId))
+    .leftJoin(cover, eq(cover.id, services.coverMediaId))
+    .where(
+      and(
+        eq(services.tenantId, tenantId),
+        eq(services.slug, slug),
+        eq(services.status, 'published'),
+      ),
+    )
+    .limit(1);
+  if (!row) return null;
+
+  const gallery = await getDb()
+    .select({ id: mediaAssets.id, url: mediaAssets.url, altText: mediaAssets.altText })
+    .from(mediaAssets)
+    .where(and(eq(mediaAssets.tenantId, tenantId), eq(mediaAssets.serviceId, row.id)))
+    .orderBy(asc(mediaAssets.sortOrder));
+
+  let parentTitle: string | null = null;
+  let parentSlug: string | null = null;
+  let siblings: { id: string; title: string; slug: string }[] = [];
+  if (row.parentId) {
+    const [parent] = await getDb()
+      .select({ title: services.title, slug: services.slug })
+      .from(services)
+      .where(and(eq(services.tenantId, tenantId), eq(services.id, row.parentId)))
+      .limit(1);
+    parentTitle = parent?.title ?? null;
+    parentSlug = parent?.slug ?? null;
+    siblings = await getDb()
+      .select({ id: services.id, title: services.title, slug: services.slug })
+      .from(services)
+      .where(
+        and(
+          eq(services.tenantId, tenantId),
+          eq(services.parentId, row.parentId),
+          eq(services.status, 'published'),
+        ),
+      )
+      .orderBy(asc(services.sortOrder));
+  }
+
+  return {
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
+    excerpt: row.excerpt,
+    body: row.body,
+    iconUrl: row.iconUrl,
+    coverUrl: row.coverUrl,
+    parentTitle,
+    parentSlug,
+    gallery,
+    siblings,
+  };
 }
 
 export async function getStats(tenantId: string) {
@@ -231,16 +373,24 @@ export async function getTestimonials(tenantId: string) {
       company: testimonials.company,
       quote: testimonials.quote,
       rating: testimonials.rating,
+      avatarUrl: mediaAssets.url,
     })
     .from(testimonials)
+    .leftJoin(mediaAssets, eq(mediaAssets.id, testimonials.avatarMediaId))
     .where(and(eq(testimonials.tenantId, tenantId), eq(testimonials.status, 'published')))
     .orderBy(asc(testimonials.sortOrder));
 }
 
 export async function getClients(tenantId: string) {
   return getDb()
-    .select({ id: clients.id, name: clients.name, website: clients.website })
+    .select({
+      id: clients.id,
+      name: clients.name,
+      website: clients.website,
+      logoUrl: mediaAssets.url,
+    })
     .from(clients)
+    .leftJoin(mediaAssets, eq(mediaAssets.id, clients.logoMediaId))
     .where(eq(clients.tenantId, tenantId))
     .orderBy(asc(clients.sortOrder));
 }
@@ -263,8 +413,15 @@ export async function getFaqs(tenantId: string) {
 
 export async function getAwards(tenantId: string) {
   return getDb()
-    .select({ id: awards.id, title: awards.title, issuer: awards.issuer, year: awards.year })
+    .select({
+      id: awards.id,
+      title: awards.title,
+      issuer: awards.issuer,
+      year: awards.year,
+      imageUrl: mediaAssets.url,
+    })
     .from(awards)
+    .leftJoin(mediaAssets, eq(mediaAssets.id, awards.mediaId))
     .where(eq(awards.tenantId, tenantId))
     .orderBy(desc(awards.year));
 }
@@ -331,4 +488,58 @@ export async function getRecentProjects(tenantId: string, limit = 8): Promise<Pr
     .orderBy(desc(projects.createdAt))
     .limit(limit);
   return rows.map(toCard);
+}
+
+export interface BlogPostCardView {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  coverUrl: string | null;
+  publishedAt: Date | null;
+  tags: string[];
+}
+
+export async function getPublishedPosts(tenantId: string): Promise<BlogPostCardView[]> {
+  const rows = await getDb()
+    .select({
+      id: posts.id,
+      slug: posts.slug,
+      title: posts.title,
+      excerpt: posts.excerpt,
+      coverUrl: mediaAssets.url,
+      publishedAt: posts.publishedAt,
+      tags: posts.tags,
+    })
+    .from(posts)
+    .leftJoin(mediaAssets, eq(mediaAssets.id, posts.coverMediaId))
+    .where(and(eq(posts.tenantId, tenantId), eq(posts.status, 'published')))
+    .orderBy(desc(posts.publishedAt));
+  return rows;
+}
+
+export interface BlogPostDetailView extends BlogPostCardView {
+  body: string | null;
+}
+
+export async function getPostBySlug(
+  tenantId: string,
+  slug: string,
+): Promise<BlogPostDetailView | null> {
+  const [row] = await getDb()
+    .select({
+      id: posts.id,
+      slug: posts.slug,
+      title: posts.title,
+      excerpt: posts.excerpt,
+      body: posts.body,
+      coverUrl: mediaAssets.url,
+      publishedAt: posts.publishedAt,
+      tags: posts.tags,
+    })
+    .from(posts)
+    .leftJoin(mediaAssets, eq(mediaAssets.id, posts.coverMediaId))
+    .where(and(eq(posts.tenantId, tenantId), eq(posts.slug, slug), eq(posts.status, 'published')))
+    .limit(1);
+  return row ?? null;
 }

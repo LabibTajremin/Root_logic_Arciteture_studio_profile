@@ -2,11 +2,43 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { Logo } from '@/presentation/components/public/Logo';
 import { ThemeToggle } from '@/presentation/components/public/ThemeToggle';
 
 export interface NavItem {
   label: string;
   href: string;
+}
+
+function BrandMark({
+  studioName,
+  logoLightUrl,
+  logoDarkUrl,
+  showTitle,
+}: {
+  studioName: string;
+  logoLightUrl: string | null;
+  logoDarkUrl: string | null;
+  showTitle: boolean;
+}) {
+  if (!logoLightUrl && !logoDarkUrl) return <Logo showWordmark={showTitle} />;
+  return (
+    <span className="inline-flex h-9 items-center gap-2">
+      {logoLightUrl && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={logoLightUrl} alt={studioName} className="tenant-logo-light h-9 w-auto" />
+      )}
+      {logoDarkUrl && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={logoDarkUrl} alt={studioName} className="tenant-logo-dark h-9 w-auto" />
+      )}
+      {showTitle && (
+        <span className="text-sm font-bold tracking-[0.2em]" style={{ color: 'var(--logo-color)' }}>
+          {studioName.toUpperCase()}
+        </span>
+      )}
+    </span>
+  );
 }
 
 /**
@@ -17,22 +49,29 @@ export function SiteHeader({
   studioName,
   nav,
   phone,
+  logoLightUrl = null,
+  logoDarkUrl = null,
+  logoShowTitle = true,
 }: {
   studioName: string;
   nav: NavItem[];
   phone: string | null;
+  logoLightUrl?: string | null;
+  logoDarkUrl?: string | null;
+  logoShowTitle?: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 border-b border-current/10 bg-[var(--background)]/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:px-6">
-        <Link
-          href="/"
-          className="text-lg font-semibold tracking-tight"
-          style={{ fontFamily: 'var(--font-hero)' }}
-        >
-          {studioName}
+        <Link href="/" aria-label={studioName}>
+          <BrandMark
+            studioName={studioName}
+            logoLightUrl={logoLightUrl}
+            logoDarkUrl={logoDarkUrl}
+            showTitle={logoShowTitle}
+          />
         </Link>
 
         <nav
@@ -91,7 +130,13 @@ export function SiteHeader({
       {open && (
         <div className="fixed inset-0 z-50 flex flex-col bg-[var(--background)] p-6 md:hidden">
           <div className="flex items-center justify-between">
-            <span className="text-lg font-semibold">{studioName}</span>
+            <BrandMark
+              studioName={studioName}
+              logoLightUrl={logoLightUrl}
+              logoDarkUrl={logoDarkUrl}
+              showTitle={logoShowTitle}
+            />
+            <span className="sr-only">{studioName}</span>
             <button
               type="button"
               aria-label="Close menu"

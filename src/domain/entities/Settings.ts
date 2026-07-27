@@ -13,6 +13,14 @@ export interface SiteSettings {
   readonly footer: unknown;
   /** Admin-controlled toggle gating editor content (see ContentVisibilityPolicy). */
   readonly editorVerificationRequired: boolean;
+  /** Admin toggle: shows/hides the blog nav link and /blog routes entirely. */
+  readonly blogEnabled: boolean;
+  /** Admin toggle: shows/hides the Vision & Mission section on the About page. */
+  readonly visionMissionEnabled: boolean;
+  readonly visionText: string | null;
+  readonly missionText: string | null;
+  /** When false, the header shows the logo image only (logo already includes the name). */
+  readonly logoShowTitle: boolean;
 }
 
 /** Editable text areas that can each take their own font and colour. */
