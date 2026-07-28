@@ -9,6 +9,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'Work',
   description: 'Selected interior and architectural projects.',
+  alternates: { canonical: '/work' },
 };
 
 export default async function WorkPage() {

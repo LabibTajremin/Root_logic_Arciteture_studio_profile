@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'Team',
   description: 'The people behind the studio.',
+  alternates: { canonical: '/team' },
 };
 
 export default async function TeamPage() {

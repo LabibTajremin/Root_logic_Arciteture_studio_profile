@@ -11,6 +11,7 @@ import {
   members,
   posts,
   projects,
+  seoSettings,
   services,
   siteSettings,
   stats,
@@ -60,6 +61,25 @@ export async function getSiteSettings(tenantId: string) {
     .leftJoin(logoLight, eq(logoLight.id, siteSettings.logoLightMediaId))
     .leftJoin(logoDark, eq(logoDark.id, siteSettings.logoDarkMediaId))
     .where(eq(siteSettings.tenantId, tenantId))
+    .limit(1);
+  return row ?? null;
+}
+
+export async function getSeoSettings(tenantId: string) {
+  const [row] = await getDb()
+    .select({
+      tenantId: seoSettings.tenantId,
+      defaultTitle: seoSettings.defaultTitle,
+      defaultDescription: seoSettings.defaultDescription,
+      gaId: seoSettings.gaId,
+      gtmId: seoSettings.gtmId,
+      metaPixelId: seoSettings.metaPixelId,
+      robots: seoSettings.robots,
+      ogImageUrl: mediaAssets.url,
+    })
+    .from(seoSettings)
+    .leftJoin(mediaAssets, eq(mediaAssets.id, seoSettings.ogImageMediaId))
+    .where(eq(seoSettings.tenantId, tenantId))
     .limit(1);
   return row ?? null;
 }

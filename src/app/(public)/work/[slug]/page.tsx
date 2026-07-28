@@ -16,10 +16,18 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: project.title,
     description: project.summary ?? undefined,
+    alternates: { canonical: `/work/${slug}` },
     openGraph: {
+      type: 'article',
       title: project.title,
       description: project.summary ?? undefined,
       images: project.coverUrl ? [{ url: project.coverUrl }] : undefined,
+    },
+    twitter: {
+      card: project.coverUrl ? 'summary_large_image' : 'summary',
+      title: project.title,
+      description: project.summary ?? undefined,
+      images: project.coverUrl ? [project.coverUrl] : undefined,
     },
   };
 }
