@@ -55,6 +55,7 @@ export async function updateSettingsAction(
     visionText: (formData.get('visionText') as string) || null,
     missionText: (formData.get('missionText') as string) || null,
     logoShowTitle: formData.get('logoShowTitle') === 'on',
+    showAdminShield: formData.get('showAdminShield') === 'on',
   });
 
   // SEO settings live in their own table.

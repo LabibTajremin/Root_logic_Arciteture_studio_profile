@@ -74,6 +74,7 @@ export default async function PublicLayout({ children }: { children: React.React
         logoLightUrl={site?.logoLightUrl ?? null}
         logoDarkUrl={site?.logoDarkUrl ?? null}
         logoShowTitle={site?.logoShowTitle ?? true}
+        showAdminShield={site?.showAdminShield ?? true}
       />
       <div className="relative z-10 flex-1">{children}</div>
       <SiteFooter

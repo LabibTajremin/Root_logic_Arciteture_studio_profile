@@ -22,6 +22,7 @@ export interface SettingsValues {
   visionText: string;
   missionText: string;
   logoShowTitle: boolean;
+  showAdminShield: boolean;
   whatsapp: string;
   socials: Record<string, string>;
   seoTitle: string;
@@ -93,6 +94,61 @@ function LogoUploadField({
         </label>
       </div>
       <p className="text-xs opacity-60">{hint}</p>
+    </div>
+  );
+}
+
+function AdminShieldField({ initialChecked }: { initialChecked: boolean }) {
+  const [checked, setChecked] = useState(initialChecked);
+  const [copied, setCopied] = useState(false);
+  const loginUrl = typeof window !== 'undefined' ? `${window.location.origin}/login` : '/login';
+
+  return (
+    <div className="flex flex-col gap-3 rounded-md border border-current/15 p-4 text-sm">
+      <label className="flex items-start gap-3">
+        <input
+          type="checkbox"
+          name="showAdminShield"
+          checked={checked}
+          onChange={(e) => setChecked(e.target.checked)}
+          className="mt-1"
+        />
+        <span>
+          <span className="font-medium">Show admin login button on the site</span>
+          <span className="mt-1 block opacity-70">
+            The shield icon in the top-right corner of the header that links to the admin login.
+            Turn this off to hide it from visitors — you can still sign in directly at the URL
+            below.
+          </span>
+        </span>
+      </label>
+      {!checked && (
+        <div className="flex flex-col gap-1.5 rounded-md bg-current/5 p-3">
+          <span className="text-xs uppercase tracking-[0.2em] opacity-60">
+            Save this login URL before you save — the button is about to disappear
+          </span>
+          <div className="flex items-center gap-2">
+            <input
+              readOnly
+              value={loginUrl}
+              onFocus={(e) => e.target.select()}
+              className="min-h-11 flex-1 rounded-md border border-current/15 bg-transparent px-3 py-2 font-mono text-xs"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                void navigator.clipboard.writeText(loginUrl).then(() => {
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                });
+              }}
+              className="min-h-11 shrink-0 rounded-md border border-current/15 px-4 text-sm font-medium hover:bg-current/5"
+            >
+              {copied ? 'Copied' : 'Copy'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -205,6 +261,8 @@ export function SettingsForm({ current }: { current: SettingsValues }) {
           </span>
         </span>
       </label>
+
+      <AdminShieldField initialChecked={current.showAdminShield} />
 
       <label className="mt-2 flex items-start gap-3 rounded-md border border-current/15 p-4 text-sm">
         <input

@@ -37,6 +37,7 @@ export class DrizzleSiteSettingsRepository implements SiteSettingsRepository {
       visionText: settings.visionText,
       missionText: settings.missionText,
       logoShowTitle: settings.logoShowTitle,
+      showAdminShield: settings.showAdminShield,
       updatedAt: new Date(),
     };
     const [row] = await this.db

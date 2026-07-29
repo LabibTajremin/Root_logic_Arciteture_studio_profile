@@ -19,4 +19,5 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   visionText: null,
   missionText: null,
   logoShowTitle: true,
+  showAdminShield: true,
 };

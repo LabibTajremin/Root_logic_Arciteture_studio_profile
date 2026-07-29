@@ -48,6 +48,7 @@ function siteSettings(tenant: string, verification: boolean): SiteSettings {
     visionText: null,
     missionText: null,
     logoShowTitle: true,
+    showAdminShield: true,
   };
 }
 

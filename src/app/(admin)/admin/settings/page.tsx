@@ -51,6 +51,7 @@ export default async function SettingsPage() {
           visionText: site?.visionText ?? '',
           missionText: site?.missionText ?? '',
           logoShowTitle: site?.logoShowTitle ?? true,
+          showAdminShield: site?.showAdminShield ?? true,
           whatsapp: site?.whatsapp ?? '',
           socials: (site?.socials as Record<string, string> | undefined) ?? {},
           seoTitle: seoRow?.defaultTitle ?? '',

@@ -24,5 +24,6 @@ export function toSiteSettings(row: SiteRow): SiteSettings {
     visionText: row.visionText,
     missionText: row.missionText,
     logoShowTitle: row.logoShowTitle,
+    showAdminShield: row.showAdminShield,
   };
 }
