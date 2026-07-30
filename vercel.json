@@ -1,3 +1,3 @@
 {
-  "buildCommand": "pnpm db:migrate && pnpm build"
+  "buildCommand": "([ -z \"$DATABASE_URL\" ] || pnpm db:migrate) && pnpm build"
 }
