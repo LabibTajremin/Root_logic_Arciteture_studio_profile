@@ -1,9 +1,11 @@
 import { resolveActiveTenantId } from '@/infrastructure/auth/tenant';
 import { getSiteSettings } from '@/infrastructure/db/queries/publicQueries';
 
-// Favicon changes are rare — an hour of staleness after the admin saves a new one is fine,
-// and it keeps every browser tab request from hitting the DB + storage on every request.
-export const revalidate = 3600;
+// Must not prerender at build time — the build environment has no live, migrated
+// database connection (same reason sitemap.ts/robots.ts force dynamic rendering).
+// HTTP-level caching is handled by the Cache-Control header on each Response below
+// instead of Next's static/ISR pipeline.
+export const dynamic = 'force-dynamic';
 
 const DEFAULT_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <rect width="100" height="100" rx="14" fill="#0f6e6e" />
@@ -30,14 +32,14 @@ function defaultIcon(): Response {
  * back so this works regardless of which storage driver serves the underlying file.
  */
 export default async function Icon() {
-  const tenantId = await resolveActiveTenantId();
-  if (!tenantId) return defaultIcon();
-
-  const site = await getSiteSettings(tenantId);
-  const url = site?.faviconUrl ?? site?.logoLightUrl ?? site?.logoDarkUrl ?? null;
-  if (!url) return defaultIcon();
-
   try {
+    const tenantId = await resolveActiveTenantId();
+    if (!tenantId) return defaultIcon();
+
+    const site = await getSiteSettings(tenantId);
+    const url = site?.faviconUrl ?? site?.logoLightUrl ?? site?.logoDarkUrl ?? null;
+    if (!url) return defaultIcon();
+
     const res = await fetch(url);
     if (!res.ok) return defaultIcon();
     const buffer = await res.arrayBuffer();
@@ -46,6 +48,7 @@ export default async function Icon() {
       headers: { 'Content-Type': contentType, 'Cache-Control': 'public, max-age=3600' },
     });
   } catch {
+    // DB unreachable, config not loaded, storage fetch failed — never break the favicon.
     return defaultIcon();
   }
 }
