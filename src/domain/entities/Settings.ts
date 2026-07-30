@@ -4,6 +4,8 @@ export interface SiteSettings {
   readonly tagline: string | null;
   readonly logoLightMediaId: string | null;
   readonly logoDarkMediaId: string | null;
+  /** Dedicated favicon upload; falls back to the logos, then a built-in default. */
+  readonly faviconMediaId: string | null;
   readonly contactEmail: string | null;
   readonly contactPhone: string | null;
   readonly whatsapp: string | null;
@@ -21,6 +23,8 @@ export interface SiteSettings {
   readonly missionText: string | null;
   /** When false, the header shows the logo image only (logo already includes the name). */
   readonly logoShowTitle: boolean;
+  /** When false, hides the admin login shield icon from the public site header. */
+  readonly showAdminShield: boolean;
 }
 
 /** Editable text areas that can each take their own font and colour. */

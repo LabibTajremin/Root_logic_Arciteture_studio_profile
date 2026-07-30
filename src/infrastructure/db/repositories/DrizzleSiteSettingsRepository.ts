@@ -24,6 +24,7 @@ export class DrizzleSiteSettingsRepository implements SiteSettingsRepository {
       tagline: settings.tagline,
       logoLightMediaId: settings.logoLightMediaId,
       logoDarkMediaId: settings.logoDarkMediaId,
+      faviconMediaId: settings.faviconMediaId,
       contactEmail: settings.contactEmail,
       contactPhone: settings.contactPhone,
       whatsapp: settings.whatsapp,
@@ -37,6 +38,7 @@ export class DrizzleSiteSettingsRepository implements SiteSettingsRepository {
       visionText: settings.visionText,
       missionText: settings.missionText,
       logoShowTitle: settings.logoShowTitle,
+      showAdminShield: settings.showAdminShield,
       updatedAt: new Date(),
     };
     const [row] = await this.db

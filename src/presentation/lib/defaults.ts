@@ -6,6 +6,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   tagline: null,
   logoLightMediaId: null,
   logoDarkMediaId: null,
+  faviconMediaId: null,
   contactEmail: null,
   contactPhone: null,
   whatsapp: null,
@@ -19,4 +20,5 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   visionText: null,
   missionText: null,
   logoShowTitle: true,
+  showAdminShield: true,
 };

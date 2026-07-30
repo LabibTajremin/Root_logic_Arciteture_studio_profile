@@ -16,13 +16,14 @@ export default async function SettingsPage() {
 
   const { repositories } = createContainer();
   const site = await repositories.site.get(actor.tenantId);
-  const [logoLight, logoDark, seoRow] = await Promise.all([
+  const [logoLight, logoDark, favicon, seoRow] = await Promise.all([
     site?.logoLightMediaId
       ? repositories.media.findById(actor.tenantId, site.logoLightMediaId)
       : null,
     site?.logoDarkMediaId
       ? repositories.media.findById(actor.tenantId, site.logoDarkMediaId)
       : null,
+    site?.faviconMediaId ? repositories.media.findById(actor.tenantId, site.faviconMediaId) : null,
     getDb()
       .select()
       .from(seoSettings)
@@ -46,11 +47,14 @@ export default async function SettingsPage() {
           logoLightUrl: logoLight?.url ?? '',
           logoDarkMediaId: site?.logoDarkMediaId ?? '',
           logoDarkUrl: logoDark?.url ?? '',
+          faviconMediaId: site?.faviconMediaId ?? '',
+          faviconUrl: favicon?.url ?? '',
           blogEnabled: site?.blogEnabled ?? false,
           visionMissionEnabled: site?.visionMissionEnabled ?? false,
           visionText: site?.visionText ?? '',
           missionText: site?.missionText ?? '',
           logoShowTitle: site?.logoShowTitle ?? true,
+          showAdminShield: site?.showAdminShield ?? true,
           whatsapp: site?.whatsapp ?? '',
           socials: (site?.socials as Record<string, string> | undefined) ?? {},
           seoTitle: seoRow?.defaultTitle ?? '',

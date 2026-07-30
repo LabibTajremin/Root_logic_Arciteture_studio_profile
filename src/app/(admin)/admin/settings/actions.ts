@@ -50,11 +50,13 @@ export async function updateSettingsAction(
     editorVerificationRequired: formData.get('editorVerificationRequired') === 'on',
     logoLightMediaId: (formData.get('logoLightMediaId') as string) || null,
     logoDarkMediaId: (formData.get('logoDarkMediaId') as string) || null,
+    faviconMediaId: (formData.get('faviconMediaId') as string) || null,
     blogEnabled: formData.get('blogEnabled') === 'on',
     visionMissionEnabled: formData.get('visionMissionEnabled') === 'on',
     visionText: (formData.get('visionText') as string) || null,
     missionText: (formData.get('missionText') as string) || null,
     logoShowTitle: formData.get('logoShowTitle') === 'on',
+    showAdminShield: formData.get('showAdminShield') === 'on',
   });
 
   // SEO settings live in their own table.
@@ -74,6 +76,7 @@ export async function updateSettingsAction(
   revalidatePath('/blog');
 
   revalidatePath('/', 'layout');
+  revalidatePath('/icon');
   revalidatePath('/admin/settings');
   return { saved: true };
 }

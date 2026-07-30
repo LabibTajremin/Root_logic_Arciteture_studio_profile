@@ -35,6 +35,7 @@ function siteSettings(tenant: string, verification: boolean): SiteSettings {
     tagline: null,
     logoLightMediaId: null,
     logoDarkMediaId: null,
+    faviconMediaId: null,
     contactEmail: null,
     contactPhone: null,
     whatsapp: null,
@@ -48,6 +49,7 @@ function siteSettings(tenant: string, verification: boolean): SiteSettings {
     visionText: null,
     missionText: null,
     logoShowTitle: true,
+    showAdminShield: true,
   };
 }
 

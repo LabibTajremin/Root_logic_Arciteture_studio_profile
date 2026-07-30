@@ -10,6 +10,9 @@ export const siteSettings = pgTable(
     tagline: text('tagline'),
     logoLightMediaId: uuid('logo_light_media_id'),
     logoDarkMediaId: uuid('logo_dark_media_id'),
+    // Dedicated favicon upload. When unset, the browser tab icon falls back to
+    // logoLightMediaId, then logoDarkMediaId, then the built-in default mark.
+    faviconMediaId: uuid('favicon_media_id'),
     contactEmail: text('contact_email'),
     contactPhone: text('contact_phone'),
     whatsapp: text('whatsapp'),
@@ -24,6 +27,10 @@ export const siteSettings = pgTable(
     missionText: text('mission_text'),
     // When false, the header shows only the logo image (for logos that already include the name).
     logoShowTitle: boolean('logo_show_title').notNull().default(true),
+    // Public-site admin login shield icon (top right of the header). Some studios don't
+    // want a visible admin entry point; when off, the settings page shows the /login URL
+    // so the admin can bookmark it before the button disappears.
+    showAdminShield: boolean('show_admin_shield').notNull().default(true),
     // Admin-set expected media aspect ratios; surfaced as upload helper text.
     mediaRatios: jsonb('media_ratios').$type<Record<string, string>>().notNull().default({
       heroImage: '16:9',
