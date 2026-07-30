@@ -35,6 +35,7 @@ function siteSettings(tenant: string, verification: boolean): SiteSettings {
     tagline: null,
     logoLightMediaId: null,
     logoDarkMediaId: null,
+    faviconMediaId: null,
     contactEmail: null,
     contactPhone: null,
     whatsapp: null,

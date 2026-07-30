@@ -11,6 +11,7 @@ export function toSiteSettings(row: SiteRow): SiteSettings {
     tagline: row.tagline,
     logoLightMediaId: row.logoLightMediaId,
     logoDarkMediaId: row.logoDarkMediaId,
+    faviconMediaId: row.faviconMediaId,
     contactEmail: row.contactEmail,
     contactPhone: row.contactPhone,
     whatsapp: row.whatsapp,

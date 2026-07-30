@@ -51,15 +51,18 @@ export interface ProjectCardView {
 export async function getSiteSettings(tenantId: string) {
   const logoLight = alias(mediaAssets, 'logo_light');
   const logoDark = alias(mediaAssets, 'logo_dark');
+  const favicon = alias(mediaAssets, 'favicon');
   const [row] = await getDb()
     .select({
       ...getTableColumns(siteSettings),
       logoLightUrl: logoLight.url,
       logoDarkUrl: logoDark.url,
+      faviconUrl: favicon.url,
     })
     .from(siteSettings)
     .leftJoin(logoLight, eq(logoLight.id, siteSettings.logoLightMediaId))
     .leftJoin(logoDark, eq(logoDark.id, siteSettings.logoDarkMediaId))
+    .leftJoin(favicon, eq(favicon.id, siteSettings.faviconMediaId))
     .where(eq(siteSettings.tenantId, tenantId))
     .limit(1);
   return row ?? null;

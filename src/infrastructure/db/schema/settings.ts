@@ -10,6 +10,9 @@ export const siteSettings = pgTable(
     tagline: text('tagline'),
     logoLightMediaId: uuid('logo_light_media_id'),
     logoDarkMediaId: uuid('logo_dark_media_id'),
+    // Dedicated favicon upload. When unset, the browser tab icon falls back to
+    // logoLightMediaId, then logoDarkMediaId, then the built-in default mark.
+    faviconMediaId: uuid('favicon_media_id'),
     contactEmail: text('contact_email'),
     contactPhone: text('contact_phone'),
     whatsapp: text('whatsapp'),

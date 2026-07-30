@@ -4,6 +4,8 @@ export interface SiteSettings {
   readonly tagline: string | null;
   readonly logoLightMediaId: string | null;
   readonly logoDarkMediaId: string | null;
+  /** Dedicated favicon upload; falls back to the logos, then a built-in default. */
+  readonly faviconMediaId: string | null;
   readonly contactEmail: string | null;
   readonly contactPhone: string | null;
   readonly whatsapp: string | null;

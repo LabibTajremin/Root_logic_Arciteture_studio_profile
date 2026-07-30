@@ -17,6 +17,8 @@ export interface SettingsValues {
   logoLightUrl: string;
   logoDarkMediaId: string;
   logoDarkUrl: string;
+  faviconMediaId: string;
+  faviconUrl: string;
   blogEnabled: boolean;
   visionMissionEnabled: boolean;
   visionText: string;
@@ -94,6 +96,115 @@ function LogoUploadField({
         </label>
       </div>
       <p className="text-xs opacity-60">{hint}</p>
+    </div>
+  );
+}
+
+function FaviconField({
+  initialMediaId,
+  initialUrl,
+  logoLightMediaId,
+  logoLightUrl,
+  logoDarkMediaId,
+  logoDarkUrl,
+}: {
+  initialMediaId: string;
+  initialUrl: string;
+  logoLightMediaId: string;
+  logoLightUrl: string;
+  logoDarkMediaId: string;
+  logoDarkUrl: string;
+}) {
+  const [mediaId, setMediaId] = useState(initialMediaId);
+  const [previewUrl, setPreviewUrl] = useState(initialUrl);
+  const [uploading, setUploading] = useState(false);
+
+  async function upload(file: File) {
+    setUploading(true);
+    const body = new FormData();
+    body.set('file', file);
+    body.set('altText', 'Favicon');
+    try {
+      const res = await fetch('/api/admin/upload', { method: 'POST', body });
+      if (res.ok) {
+        const { media } = (await res.json()) as { media: { id: string; url: string } };
+        setMediaId(media.id);
+        setPreviewUrl(media.url);
+      }
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-3 rounded-md border border-current/15 p-4 text-sm">
+      <span className="font-medium">Favicon</span>
+      <p className="opacity-70">
+        Shown in the browser tab. If left empty, the light logo is used, then the dark logo, then a
+        default mark — so setting a logo above already gives you a favicon for free.
+      </p>
+      <div className="flex items-center gap-3">
+        <div
+          className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-md border border-current/15"
+          style={{ background: '#faf6f1' }}
+        >
+          {previewUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={previewUrl} alt="" className="h-full w-full object-contain p-2" />
+          )}
+        </div>
+        <input type="hidden" name="faviconMediaId" value={mediaId} />
+        <div className="flex flex-wrap gap-2">
+          <label className="inline-flex min-h-11 cursor-pointer items-center rounded-md border border-current/15 px-4 text-sm font-medium hover:bg-current/5">
+            {uploading ? 'Uploading…' : previewUrl ? 'Replace' : 'Upload'}
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              className="sr-only"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) void upload(f);
+              }}
+            />
+          </label>
+          {logoLightMediaId && logoLightUrl && (
+            <button
+              type="button"
+              onClick={() => {
+                setMediaId(logoLightMediaId);
+                setPreviewUrl(logoLightUrl);
+              }}
+              className="min-h-11 rounded-md border border-current/15 px-4 text-sm font-medium hover:bg-current/5"
+            >
+              Use light logo
+            </button>
+          )}
+          {logoDarkMediaId && logoDarkUrl && (
+            <button
+              type="button"
+              onClick={() => {
+                setMediaId(logoDarkMediaId);
+                setPreviewUrl(logoDarkUrl);
+              }}
+              className="min-h-11 rounded-md border border-current/15 px-4 text-sm font-medium hover:bg-current/5"
+            >
+              Use dark logo
+            </button>
+          )}
+          {previewUrl && (
+            <button
+              type="button"
+              onClick={() => {
+                setMediaId('');
+                setPreviewUrl('');
+              }}
+              className="min-h-11 rounded-md border border-current/15 px-4 text-sm font-medium hover:bg-current/5"
+            >
+              Reset to default
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -245,6 +356,15 @@ export function SettingsForm({ current }: { current: SettingsValues }) {
           previewBackground="#0d0b0a"
         />
       </div>
+
+      <FaviconField
+        initialMediaId={current.faviconMediaId}
+        initialUrl={current.faviconUrl}
+        logoLightMediaId={current.logoLightMediaId}
+        logoLightUrl={current.logoLightUrl}
+        logoDarkMediaId={current.logoDarkMediaId}
+        logoDarkUrl={current.logoDarkUrl}
+      />
 
       <label className="flex items-start gap-3 rounded-md border border-current/15 p-4 text-sm">
         <input
