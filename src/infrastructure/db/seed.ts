@@ -81,6 +81,30 @@ async function main() {
     console.log(`Created editor ${editorEmail}`);
   }
 
+  // ── demo favicon — a real media row so Settings shows something to replace.
+  // Only created the first time this tenant is seeded; re-running seed against an
+  // already-configured install must not spawn a fresh orphaned media row each time.
+  const existingSiteSettings = await db.query.siteSettings.findFirst({
+    where: eq(schema.siteSettings.tenantId, DEMO_TENANT_ID),
+  });
+  let faviconMediaId: string | null = null;
+  if (!existingSiteSettings) {
+    faviconMediaId = randomUUID();
+    await db.insert(schema.mediaAssets).values({
+      id: faviconMediaId,
+      tenantId: DEMO_TENANT_ID,
+      projectId: null,
+      type: 'image',
+      storageDriver: LOCAL_DRIVER_CODE,
+      storageKey: 'demo/favicon.png',
+      url: img('Favicon', 512, 512),
+      width: 512,
+      height: 512,
+      altText: 'Demo favicon',
+      sortOrder: 0,
+    });
+  }
+
   // ── settings ────────────────────────────────────────────────────────────────
   await db
     .insert(schema.siteSettings)
@@ -94,6 +118,7 @@ async function main() {
       address: 'House 12, Road 7, Dhanmondi, Dhaka',
       socials: { instagram: 'https://instagram.com', facebook: 'https://facebook.com' },
       editorVerificationRequired: true,
+      faviconMediaId,
     })
     .onConflictDoNothing();
   await db.insert(schema.themeSettings).values({ tenantId: DEMO_TENANT_ID }).onConflictDoNothing();
