@@ -1,1 +1,1 @@
-ALTER TABLE "site_settings" ADD COLUMN "favicon_media_id" uuid;
+ALTER TABLE "site_settings" ADD COLUMN IF NOT EXISTS "favicon_media_id" uuid;

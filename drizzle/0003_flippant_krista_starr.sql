@@ -1,1 +1,1 @@
-ALTER TABLE "site_settings" ADD COLUMN "show_admin_shield" boolean DEFAULT true NOT NULL;
+ALTER TABLE "site_settings" ADD COLUMN IF NOT EXISTS "show_admin_shield" boolean DEFAULT true NOT NULL;
