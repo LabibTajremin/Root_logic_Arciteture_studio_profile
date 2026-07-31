@@ -25,6 +25,8 @@ export interface SiteSettings {
   readonly logoShowTitle: boolean;
   /** When false, hides the admin login shield icon from the public site header. */
   readonly showAdminShield: boolean;
+  /** Admin overrides for static marketing copy — see presentation/lib/copy.ts. */
+  readonly copy: Readonly<Record<string, string>>;
 }
 
 /** Editable text areas that can each take their own font and colour. */

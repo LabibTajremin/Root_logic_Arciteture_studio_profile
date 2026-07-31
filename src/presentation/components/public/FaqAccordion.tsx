@@ -9,7 +9,15 @@ export interface FaqItem {
 }
 
 /** Single-open accordion with animated height and FAQPage JSON-LD for SEO. */
-export function FaqAccordion({ faqs }: { faqs: FaqItem[] }) {
+export function FaqAccordion({
+  faqs,
+  eyebrow = 'Questions',
+  title = 'FAQ',
+}: {
+  faqs: FaqItem[];
+  eyebrow?: string;
+  title?: string;
+}) {
   const [open, setOpen] = useState<string | null>(faqs[0]?.id ?? null);
   if (!faqs.length) return null;
 
@@ -30,12 +38,12 @@ export function FaqAccordion({ faqs }: { faqs: FaqItem[] }) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div className="mb-10 flex flex-col gap-2">
-        <p className="text-xs uppercase tracking-[0.2em] opacity-60">Questions</p>
+        <p className="text-xs uppercase tracking-[0.2em] opacity-60">{eyebrow}</p>
         <h2
           className="text-[clamp(1.8rem,4vw,3rem)] font-semibold tracking-tight"
           style={{ fontFamily: 'var(--font-headings)' }}
         >
-          FAQ
+          {title}
         </h2>
       </div>
       <ul className="flex flex-col divide-y divide-current/10 border-y border-current/10">

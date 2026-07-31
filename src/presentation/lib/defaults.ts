@@ -21,4 +21,5 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   missionText: null,
   logoShowTitle: true,
   showAdminShield: true,
+  copy: {},
 };
