@@ -9,6 +9,7 @@ import {
   getValues,
 } from '@/infrastructure/db/queries/publicQueries';
 import { Reveal } from '@/presentation/components/public/Reveal';
+import { copyText } from '@/presentation/lib/copy';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,7 +33,9 @@ export default async function AboutPage() {
   return (
     <main className="mx-auto max-w-5xl px-4 py-20 md:px-6 md:py-28">
       <header className="mb-16 max-w-3xl">
-        <p className="text-xs uppercase tracking-[0.2em] opacity-60">About the studio</p>
+        <p className="text-xs uppercase tracking-[0.2em] opacity-60">
+          {copyText(site?.copy, 'about.eyebrow')}
+        </p>
         <h1
           className="mt-2 text-[clamp(2.2rem,6vw,4rem)] font-semibold tracking-tight"
           style={{ fontFamily: 'var(--font-headings)' }}

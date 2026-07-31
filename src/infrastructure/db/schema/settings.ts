@@ -31,6 +31,11 @@ export const siteSettings = pgTable(
     // want a visible admin entry point; when off, the settings page shows the /login URL
     // so the admin can bookmark it before the button disappears.
     showAdminShield: boolean('show_admin_shield').notNull().default(true),
+    // Admin overrides for static marketing copy (section headings, CTAs, page intros)
+    // keyed by id — see src/presentation/lib/copy.ts for the key list and defaults.
+    // Missing/empty keys fall back to the built-in default text, so this can stay {}
+    // forever on installs that never touch it.
+    copy: jsonb('copy').$type<Record<string, string>>().notNull().default({}),
     // Admin-set expected media aspect ratios; surfaced as upload helper text.
     mediaRatios: jsonb('media_ratios').$type<Record<string, string>>().notNull().default({
       heroImage: '16:9',

@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { resolveActiveTenantId } from '@/infrastructure/auth/tenant';
-import { getPublishedMembers } from '@/infrastructure/db/queries/publicQueries';
+import { getPublishedMembers, getSiteSettings } from '@/infrastructure/db/queries/publicQueries';
 import { Reveal } from '@/presentation/components/public/Reveal';
+import { copyText } from '@/presentation/lib/copy';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,17 +14,21 @@ export const metadata: Metadata = {
 
 export default async function TeamPage() {
   const tenantId = await resolveActiveTenantId();
-  const members = tenantId ? await getPublishedMembers(tenantId) : [];
+  const [members, site] = tenantId
+    ? await Promise.all([getPublishedMembers(tenantId), getSiteSettings(tenantId)])
+    : [[], null];
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-20 md:px-6 md:py-28">
       <header className="mb-12">
-        <p className="text-xs uppercase tracking-[0.2em] opacity-60">The people</p>
+        <p className="text-xs uppercase tracking-[0.2em] opacity-60">
+          {copyText(site?.copy, 'team.eyebrow')}
+        </p>
         <h1
           className="text-[clamp(2.2rem,6vw,4rem)] font-semibold tracking-tight"
           style={{ fontFamily: 'var(--font-headings)' }}
         >
-          Our team
+          {copyText(site?.copy, 'team.title')}
         </h1>
       </header>
 

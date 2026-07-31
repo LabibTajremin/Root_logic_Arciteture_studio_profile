@@ -1,8 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { resolveActiveTenantId } from '@/infrastructure/auth/tenant';
-import { getServices, groupServicesByCategory } from '@/infrastructure/db/queries/publicQueries';
+import {
+  getServices,
+  getSiteSettings,
+  groupServicesByCategory,
+} from '@/infrastructure/db/queries/publicQueries';
 import { Reveal } from '@/presentation/components/public/Reveal';
+import { copyText } from '@/presentation/lib/copy';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,18 +18,22 @@ export const metadata: Metadata = {
 
 export default async function ServicesPage() {
   const tenantId = await resolveActiveTenantId();
-  const flat = tenantId ? await getServices(tenantId) : [];
+  const [flat, site] = tenantId
+    ? await Promise.all([getServices(tenantId), getSiteSettings(tenantId)])
+    : [[], null];
   const categories = groupServicesByCategory(flat);
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-20 md:px-6 md:py-28">
       <header className="mb-12">
-        <p className="text-xs uppercase tracking-[0.2em] opacity-60">What we do</p>
+        <p className="text-xs uppercase tracking-[0.2em] opacity-60">
+          {copyText(site?.copy, 'services.eyebrow')}
+        </p>
         <h1
           className="text-[clamp(2.2rem,6vw,4rem)] font-semibold tracking-tight"
           style={{ fontFamily: 'var(--font-headings)' }}
         >
-          Services
+          {copyText(site?.copy, 'services.title')}
         </h1>
       </header>
 

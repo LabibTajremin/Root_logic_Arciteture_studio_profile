@@ -33,12 +33,20 @@ export function PrincipalNote({ tagline }: { tagline: string | null }) {
   );
 }
 
-export function FeaturedProjects({ projects }: { projects: ProjectCardView[] }) {
+export function FeaturedProjects({
+  projects,
+  eyebrow = 'Selected work',
+  title = 'Featured projects',
+}: {
+  projects: ProjectCardView[];
+  eyebrow?: string;
+  title?: string;
+}) {
   if (!projects.length) return null;
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
       <div className="flex items-end justify-between">
-        <SectionHeading eyebrow="Selected work" title="Featured projects" />
+        <SectionHeading eyebrow={eyebrow} title={title} />
         <Link href="/work" className="mb-10 hidden text-sm underline underline-offset-4 md:inline">
           View all
         </Link>
@@ -67,13 +75,21 @@ export interface ServiceCategoryCard {
   children: { id: string; title: string; slug: string }[];
 }
 
-export function Services({ services }: { services: ServiceCategoryCard[] }) {
+export function Services({
+  services,
+  eyebrow = 'What we do',
+  title = 'Services',
+}: {
+  services: ServiceCategoryCard[];
+  eyebrow?: string;
+  title?: string;
+}) {
   if (!services.length) return null;
   return (
     <section className="border-y border-current/10">
       <div className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
         <div className="flex items-end justify-between">
-          <SectionHeading eyebrow="What we do" title="Services" />
+          <SectionHeading eyebrow={eyebrow} title={title} />
           <Link
             href="/services"
             className="mb-10 hidden text-sm underline underline-offset-4 md:inline"
@@ -149,13 +165,17 @@ export function StatsBand({
 
 export function Team({
   members,
+  eyebrow = 'The people',
+  title = 'Our team',
 }: {
   members: { id: string; name: string; roleTitle: string | null; photoUrl: string | null }[];
+  eyebrow?: string;
+  title?: string;
 }) {
   if (!members.length) return null;
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
-      <SectionHeading eyebrow="The people" title="Our team" />
+      <SectionHeading eyebrow={eyebrow} title={title} />
       <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
         {members.map((member, i) => (
           <Reveal key={member.id} delayIndex={i % 4}>
@@ -184,6 +204,8 @@ export function Team({
 
 export function Testimonials({
   testimonials,
+  eyebrow = 'Kind words',
+  title = 'What clients say',
 }: {
   testimonials: {
     id: string;
@@ -192,12 +214,14 @@ export function Testimonials({
     quote: string;
     avatarUrl?: string | null;
   }[];
+  eyebrow?: string;
+  title?: string;
 }) {
   if (!testimonials.length) return null;
   return (
     <section className="border-y border-current/10">
       <div className="mx-auto max-w-4xl px-4 py-16 text-center md:px-6 md:py-24">
-        <SectionHeading eyebrow="Kind words" title="What clients say" />
+        <SectionHeading eyebrow={eyebrow} title={title} />
         <div className="flex flex-col gap-12">
           {testimonials.map((t) => (
             <Reveal key={t.id}>
@@ -297,13 +321,17 @@ const DEFAULT_CATEGORY_COVER = 'https://cdn.stocksnap.io/img-thumbs/960w/TQNWBTL
 
 export function PortfolioCategories({
   categories,
+  eyebrow = 'Explore',
+  title = 'Portfolio',
 }: {
   categories: { id: string; name: string; slug: string }[];
+  eyebrow?: string;
+  title?: string;
 }) {
   if (!categories.length) return null;
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
-      <SectionHeading eyebrow="Explore" title="Portfolio" />
+      <SectionHeading eyebrow={eyebrow} title={title} />
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {categories.map((cat, i) => (
           <Reveal key={cat.id} delayIndex={i % 3}>
@@ -341,13 +369,17 @@ export function PortfolioCategories({
 
 export function CoreValues({
   values,
+  eyebrow = 'How we work',
+  title = 'Our values',
 }: {
   values: { id: string; title: string; body: string | null }[];
+  eyebrow?: string;
+  title?: string;
 }) {
   if (!values.length) return null;
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
-      <SectionHeading eyebrow="How we work" title="Our values" />
+      <SectionHeading eyebrow={eyebrow} title={title} />
       <ol className="grid grid-cols-1 gap-x-10 gap-y-8 sm:grid-cols-2">
         {values.map((v, i) => (
           <Reveal key={v.id} as="li" delayIndex={i % 2}>
@@ -367,14 +399,18 @@ export function CoreValues({
 
 export function AwardsList({
   awards,
+  eyebrow = 'Recognition',
+  title = 'Awards & press',
 }: {
   awards: { id: string; title: string; issuer: string | null; year: number | null }[];
+  eyebrow?: string;
+  title?: string;
 }) {
   if (!awards.length) return null;
   return (
     <section className="border-y border-current/10">
       <div className="mx-auto max-w-4xl px-4 py-16 md:px-6">
-        <SectionHeading eyebrow="Recognition" title="Awards & press" />
+        <SectionHeading eyebrow={eyebrow} title={title} />
         <ul className="flex flex-col divide-y divide-current/10">
           {awards.map((a) => (
             <li key={a.id} className="flex items-baseline justify-between gap-4 py-4">
@@ -391,7 +427,17 @@ export function AwardsList({
   );
 }
 
-export function ContactBand({ email, phone }: { email: string | null; phone: string | null }) {
+export function ContactBand({
+  email,
+  phone,
+  heading = 'Let’s design something enduring together.',
+  ctaLabel = 'Get in touch',
+}: {
+  email: string | null;
+  phone: string | null;
+  heading?: string;
+  ctaLabel?: string;
+}) {
   return (
     <section className="mx-auto max-w-6xl px-4 py-20 md:px-6 md:py-28">
       <Reveal>
@@ -399,14 +445,14 @@ export function ContactBand({ email, phone }: { email: string | null; phone: str
           className="max-w-3xl text-[clamp(2rem,6vw,4.5rem)] font-semibold leading-[1.02] tracking-tight"
           style={{ fontFamily: 'var(--font-headings)' }}
         >
-          Let’s design something enduring together.
+          {heading}
         </h2>
         <div className="mt-8 flex flex-wrap items-center gap-4">
           <Link
             href="/contact"
             className="inline-flex min-h-11 items-center rounded-full bg-[var(--accent)] px-6 font-medium text-[var(--accent-foreground)]"
           >
-            Get in touch
+            {ctaLabel}
           </Link>
           {email && (
             <a href={`mailto:${email}`} className="text-sm underline underline-offset-4">

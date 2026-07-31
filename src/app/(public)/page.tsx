@@ -31,6 +31,7 @@ import {
   Team,
   Testimonials,
 } from '@/presentation/components/public/sections';
+import { copyText } from '@/presentation/lib/copy';
 
 export const dynamic = 'force-dynamic';
 
@@ -86,21 +87,52 @@ export default async function HomePage() {
     getFaqs(tenantId),
   ]);
 
+  const c = (key: string) => copyText(site?.copy, key);
+
   return (
     <main>
       <Hero slides={slides} />
       <PrincipalNote tagline={site?.tagline ?? null} />
       <ClientLogoWall clients={clients} />
-      <PortfolioCategories categories={categories} />
-      <FeaturedProjects projects={featured} />
-      <Services services={groupServicesByCategory(services)} />
+      <PortfolioCategories
+        categories={categories}
+        eyebrow={c('home.portfolio.eyebrow')}
+        title={c('home.portfolio.title')}
+      />
+      <FeaturedProjects
+        projects={featured}
+        eyebrow={c('home.featuredProjects.eyebrow')}
+        title={c('home.featuredProjects.title')}
+      />
+      <Services
+        services={groupServicesByCategory(services)}
+        eyebrow={c('home.services.eyebrow')}
+        title={c('home.services.title')}
+      />
       <StatsBand stats={stats} />
-      <CoreValues values={values} />
-      <Team members={members} />
-      <Testimonials testimonials={testimonials} />
-      <AwardsList awards={awards} />
-      <FaqAccordion faqs={faqs} />
-      <ContactBand email={site?.contactEmail ?? null} phone={site?.contactPhone ?? null} />
+      <CoreValues
+        values={values}
+        eyebrow={c('home.values.eyebrow')}
+        title={c('home.values.title')}
+      />
+      <Team members={members} eyebrow={c('home.team.eyebrow')} title={c('home.team.title')} />
+      <Testimonials
+        testimonials={testimonials}
+        eyebrow={c('home.testimonials.eyebrow')}
+        title={c('home.testimonials.title')}
+      />
+      <AwardsList
+        awards={awards}
+        eyebrow={c('home.awards.eyebrow')}
+        title={c('home.awards.title')}
+      />
+      <FaqAccordion faqs={faqs} eyebrow={c('home.faq.eyebrow')} title={c('home.faq.title')} />
+      <ContactBand
+        email={site?.contactEmail ?? null}
+        phone={site?.contactPhone ?? null}
+        heading={c('home.contactBand.heading')}
+        ctaLabel={c('home.contactBand.ctaLabel')}
+      />
     </main>
   );
 }

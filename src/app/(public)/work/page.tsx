@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import { resolveActiveTenantId } from '@/infrastructure/auth/tenant';
-import { getPublishedProjects } from '@/infrastructure/db/queries/publicQueries';
+import { getPublishedProjects, getSiteSettings } from '@/infrastructure/db/queries/publicQueries';
 import { Reveal } from '@/presentation/components/public/Reveal';
 import { ProjectCard } from '@/presentation/components/public/ProjectCard';
+import { copyText } from '@/presentation/lib/copy';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,17 +15,21 @@ export const metadata: Metadata = {
 
 export default async function WorkPage() {
   const tenantId = await resolveActiveTenantId();
-  const projects = tenantId ? await getPublishedProjects(tenantId) : [];
+  const [projects, site] = tenantId
+    ? await Promise.all([getPublishedProjects(tenantId), getSiteSettings(tenantId)])
+    : [[], null];
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-20 md:px-6 md:py-28">
       <header className="mb-12">
-        <p className="text-xs uppercase tracking-[0.2em] opacity-60">Portfolio</p>
+        <p className="text-xs uppercase tracking-[0.2em] opacity-60">
+          {copyText(site?.copy, 'work.eyebrow')}
+        </p>
         <h1
           className="text-[clamp(2.2rem,6vw,4rem)] font-semibold tracking-tight"
           style={{ fontFamily: 'var(--font-headings)' }}
         >
-          Our work
+          {copyText(site?.copy, 'work.title')}
         </h1>
       </header>
 

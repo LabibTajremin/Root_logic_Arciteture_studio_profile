@@ -50,6 +50,7 @@ function siteSettings(tenant: string, verification: boolean): SiteSettings {
     missionText: null,
     logoShowTitle: true,
     showAdminShield: true,
+    copy: {},
   };
 }
 

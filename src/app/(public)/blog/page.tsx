@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { resolveActiveTenantId } from '@/infrastructure/auth/tenant';
 import { getPublishedPosts, getSiteSettings } from '@/infrastructure/db/queries/publicQueries';
 import { Reveal } from '@/presentation/components/public/Reveal';
+import { copyText } from '@/presentation/lib/copy';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,12 +23,14 @@ export default async function BlogPage() {
   return (
     <main className="mx-auto max-w-6xl px-4 py-20 md:px-6 md:py-28">
       <header className="mb-12">
-        <p className="text-xs uppercase tracking-[0.2em] opacity-60">Notes</p>
+        <p className="text-xs uppercase tracking-[0.2em] opacity-60">
+          {copyText(site?.copy, 'blog.eyebrow')}
+        </p>
         <h1
           className="text-[clamp(2.2rem,6vw,4rem)] font-semibold tracking-tight"
           style={{ fontFamily: 'var(--font-headings)' }}
         >
-          Blog
+          {copyText(site?.copy, 'blog.title')}
         </h1>
       </header>
 
