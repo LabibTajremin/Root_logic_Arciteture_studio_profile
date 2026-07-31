@@ -1,4 +1,4 @@
-CREATE TABLE "tenants" (
+CREATE TABLE IF NOT EXISTS "tenants" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"slug" text NOT NULL,
 	"custom_domain" text,
@@ -8,7 +8,7 @@ CREATE TABLE "tenants" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "users" (
+CREATE TABLE IF NOT EXISTS "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"email" text NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE "users" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "categories" (
+CREATE TABLE IF NOT EXISTS "categories" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"name" text NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE "categories" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "projects" (
+CREATE TABLE IF NOT EXISTS "projects" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"slug" text NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE "projects" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "media_assets" (
+CREATE TABLE IF NOT EXISTS "media_assets" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"project_id" uuid,
@@ -75,7 +75,7 @@ CREATE TABLE "media_assets" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "members" (
+CREATE TABLE IF NOT EXISTS "members" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"name" text NOT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE "members" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "seo_settings" (
+CREATE TABLE IF NOT EXISTS "seo_settings" (
 	"tenant_id" uuid PRIMARY KEY NOT NULL,
 	"default_title" text,
 	"default_description" text,
@@ -102,7 +102,7 @@ CREATE TABLE "seo_settings" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "site_settings" (
+CREATE TABLE IF NOT EXISTS "site_settings" (
 	"tenant_id" uuid PRIMARY KEY NOT NULL,
 	"studio_name" text NOT NULL,
 	"tagline" text,
@@ -121,7 +121,7 @@ CREATE TABLE "site_settings" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "theme_settings" (
+CREATE TABLE IF NOT EXISTS "theme_settings" (
 	"tenant_id" uuid PRIMARY KEY NOT NULL,
 	"mode" text DEFAULT 'system' NOT NULL,
 	"accent_id" text DEFAULT 'oxblood' NOT NULL,
@@ -158,7 +158,7 @@ CREATE TABLE "theme_settings" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "awards" (
+CREATE TABLE IF NOT EXISTS "awards" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"title" text NOT NULL,
@@ -171,7 +171,7 @@ CREATE TABLE "awards" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "clients" (
+CREATE TABLE IF NOT EXISTS "clients" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"name" text NOT NULL,
@@ -183,7 +183,7 @@ CREATE TABLE "clients" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "faqs" (
+CREATE TABLE IF NOT EXISTS "faqs" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"question" text NOT NULL,
@@ -195,7 +195,7 @@ CREATE TABLE "faqs" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "hero_slides" (
+CREATE TABLE IF NOT EXISTS "hero_slides" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"eyebrow" text,
@@ -212,7 +212,7 @@ CREATE TABLE "hero_slides" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "process_steps" (
+CREATE TABLE IF NOT EXISTS "process_steps" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"step_no" integer NOT NULL,
@@ -224,7 +224,7 @@ CREATE TABLE "process_steps" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "services" (
+CREATE TABLE IF NOT EXISTS "services" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"title" text NOT NULL,
@@ -239,7 +239,7 @@ CREATE TABLE "services" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "stats" (
+CREATE TABLE IF NOT EXISTS "stats" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"label" text NOT NULL,
@@ -250,7 +250,7 @@ CREATE TABLE "stats" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "testimonials" (
+CREATE TABLE IF NOT EXISTS "testimonials" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"author_name" text NOT NULL,
@@ -265,7 +265,7 @@ CREATE TABLE "testimonials" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "values" (
+CREATE TABLE IF NOT EXISTS "values" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"title" text NOT NULL,
@@ -276,7 +276,7 @@ CREATE TABLE "values" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "posts" (
+CREATE TABLE IF NOT EXISTS "posts" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"slug" text NOT NULL,
@@ -292,7 +292,7 @@ CREATE TABLE "posts" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "audit_log" (
+CREATE TABLE IF NOT EXISTS "audit_log" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"actor_id" uuid,
@@ -304,7 +304,7 @@ CREATE TABLE "audit_log" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "inquiries" (
+CREATE TABLE IF NOT EXISTS "inquiries" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"name" text NOT NULL,
@@ -317,7 +317,7 @@ CREATE TABLE "inquiries" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "licences" (
+CREATE TABLE IF NOT EXISTS "licences" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"key_fingerprint" text NOT NULL,
 	"plan" text NOT NULL,
@@ -328,7 +328,7 @@ CREATE TABLE "licences" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "revisions" (
+CREATE TABLE IF NOT EXISTS "revisions" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
 	"entity" text NOT NULL,
@@ -343,40 +343,40 @@ CREATE TABLE "revisions" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX "uniq_tenants_slug" ON "tenants" USING btree ("slug");--> statement-breakpoint
-CREATE UNIQUE INDEX "uniq_tenants_custom_domain" ON "tenants" USING btree ("custom_domain");--> statement-breakpoint
-CREATE UNIQUE INDEX "uniq_users_tenant_email" ON "users" USING btree ("tenant_id",lower("email"));--> statement-breakpoint
-CREATE INDEX "idx_users_tenant_role" ON "users" USING btree ("tenant_id","role");--> statement-breakpoint
-CREATE UNIQUE INDEX "uniq_categories_tenant_slug" ON "categories" USING btree ("tenant_id","slug");--> statement-breakpoint
-CREATE INDEX "idx_categories_tenant_sort" ON "categories" USING btree ("tenant_id","sort_order");--> statement-breakpoint
-CREATE UNIQUE INDEX "uniq_projects_tenant_slug" ON "projects" USING btree ("tenant_id","slug");--> statement-breakpoint
-CREATE INDEX "idx_projects_tenant_status_sort" ON "projects" USING btree ("tenant_id","status","sort_order");--> statement-breakpoint
-CREATE INDEX "idx_projects_tenant_featured" ON "projects" USING btree ("tenant_id","is_featured") WHERE "projects"."status" = 'published';--> statement-breakpoint
-CREATE INDEX "idx_projects_tenant_category" ON "projects" USING btree ("tenant_id","category_id");--> statement-breakpoint
-CREATE INDEX "idx_projects_search" ON "projects" USING gin (to_tsvector('english', "title" || ' ' || coalesce("summary", '')));--> statement-breakpoint
-CREATE INDEX "idx_projects_keyset" ON "projects" USING btree ("created_at","id");--> statement-breakpoint
-CREATE INDEX "idx_media_tenant_project_sort" ON "media_assets" USING btree ("tenant_id","project_id","sort_order");--> statement-breakpoint
-CREATE INDEX "idx_media_tenant_type" ON "media_assets" USING btree ("tenant_id","type");--> statement-breakpoint
-CREATE INDEX "idx_media_status" ON "media_assets" USING btree ("status");--> statement-breakpoint
-CREATE INDEX "idx_members_tenant_status_sort" ON "members" USING btree ("tenant_id","status","sort_order");--> statement-breakpoint
-CREATE UNIQUE INDEX "uniq_seo_settings_tenant" ON "seo_settings" USING btree ("tenant_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "uniq_site_settings_tenant" ON "site_settings" USING btree ("tenant_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "uniq_theme_settings_tenant" ON "theme_settings" USING btree ("tenant_id");--> statement-breakpoint
-CREATE INDEX "idx_awards_tenant_year" ON "awards" USING btree ("tenant_id","year");--> statement-breakpoint
-CREATE INDEX "idx_clients_tenant_sort" ON "clients" USING btree ("tenant_id","sort_order");--> statement-breakpoint
-CREATE INDEX "idx_faqs_tenant_status_sort" ON "faqs" USING btree ("tenant_id","status","sort_order");--> statement-breakpoint
-CREATE INDEX "idx_hero_tenant_active_sort" ON "hero_slides" USING btree ("tenant_id","is_active","sort_order");--> statement-breakpoint
-CREATE INDEX "idx_process_tenant_sort" ON "process_steps" USING btree ("tenant_id","sort_order");--> statement-breakpoint
-CREATE UNIQUE INDEX "uniq_services_tenant_slug" ON "services" USING btree ("tenant_id","slug");--> statement-breakpoint
-CREATE INDEX "idx_services_tenant_parent_sort" ON "services" USING btree ("tenant_id","parent_id","sort_order");--> statement-breakpoint
-CREATE INDEX "idx_stats_tenant_sort" ON "stats" USING btree ("tenant_id","sort_order");--> statement-breakpoint
-CREATE INDEX "idx_testimonials_tenant_status_sort" ON "testimonials" USING btree ("tenant_id","status","sort_order");--> statement-breakpoint
-CREATE INDEX "idx_values_tenant_sort" ON "values" USING btree ("tenant_id","sort_order");--> statement-breakpoint
-CREATE UNIQUE INDEX "uniq_posts_tenant_slug" ON "posts" USING btree ("tenant_id","slug");--> statement-breakpoint
-CREATE INDEX "idx_posts_tenant_status_published" ON "posts" USING btree ("tenant_id","status","published_at" DESC NULLS LAST);--> statement-breakpoint
-CREATE INDEX "idx_posts_tags" ON "posts" USING gin ("tags");--> statement-breakpoint
-CREATE INDEX "idx_audit_tenant_created" ON "audit_log" USING btree ("tenant_id","created_at" DESC NULLS LAST);--> statement-breakpoint
-CREATE INDEX "idx_audit_entity" ON "audit_log" USING btree ("entity","entity_id");--> statement-breakpoint
-CREATE INDEX "idx_inquiries_tenant_read_created" ON "inquiries" USING btree ("tenant_id","is_read","created_at" DESC NULLS LAST);--> statement-breakpoint
-CREATE UNIQUE INDEX "uniq_licences_fingerprint" ON "licences" USING btree ("key_fingerprint");--> statement-breakpoint
-CREATE INDEX "idx_revisions_tenant_status_created" ON "revisions" USING btree ("tenant_id","status","created_at" DESC NULLS LAST);
+CREATE UNIQUE INDEX IF NOT EXISTS "uniq_tenants_slug" ON "tenants" USING btree ("slug");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "uniq_tenants_custom_domain" ON "tenants" USING btree ("custom_domain");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "uniq_users_tenant_email" ON "users" USING btree ("tenant_id",lower("email"));--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_users_tenant_role" ON "users" USING btree ("tenant_id","role");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "uniq_categories_tenant_slug" ON "categories" USING btree ("tenant_id","slug");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_categories_tenant_sort" ON "categories" USING btree ("tenant_id","sort_order");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "uniq_projects_tenant_slug" ON "projects" USING btree ("tenant_id","slug");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_projects_tenant_status_sort" ON "projects" USING btree ("tenant_id","status","sort_order");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_projects_tenant_featured" ON "projects" USING btree ("tenant_id","is_featured") WHERE "projects"."status" = 'published';--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_projects_tenant_category" ON "projects" USING btree ("tenant_id","category_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_projects_search" ON "projects" USING gin (to_tsvector('english', "title" || ' ' || coalesce("summary", '')));--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_projects_keyset" ON "projects" USING btree ("created_at","id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_media_tenant_project_sort" ON "media_assets" USING btree ("tenant_id","project_id","sort_order");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_media_tenant_type" ON "media_assets" USING btree ("tenant_id","type");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_media_status" ON "media_assets" USING btree ("status");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_members_tenant_status_sort" ON "members" USING btree ("tenant_id","status","sort_order");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "uniq_seo_settings_tenant" ON "seo_settings" USING btree ("tenant_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "uniq_site_settings_tenant" ON "site_settings" USING btree ("tenant_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "uniq_theme_settings_tenant" ON "theme_settings" USING btree ("tenant_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_awards_tenant_year" ON "awards" USING btree ("tenant_id","year");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_clients_tenant_sort" ON "clients" USING btree ("tenant_id","sort_order");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_faqs_tenant_status_sort" ON "faqs" USING btree ("tenant_id","status","sort_order");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_hero_tenant_active_sort" ON "hero_slides" USING btree ("tenant_id","is_active","sort_order");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_process_tenant_sort" ON "process_steps" USING btree ("tenant_id","sort_order");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "uniq_services_tenant_slug" ON "services" USING btree ("tenant_id","slug");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_services_tenant_parent_sort" ON "services" USING btree ("tenant_id","parent_id","sort_order");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_stats_tenant_sort" ON "stats" USING btree ("tenant_id","sort_order");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_testimonials_tenant_status_sort" ON "testimonials" USING btree ("tenant_id","status","sort_order");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_values_tenant_sort" ON "values" USING btree ("tenant_id","sort_order");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "uniq_posts_tenant_slug" ON "posts" USING btree ("tenant_id","slug");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_posts_tenant_status_published" ON "posts" USING btree ("tenant_id","status","published_at" DESC NULLS LAST);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_posts_tags" ON "posts" USING gin ("tags");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_audit_tenant_created" ON "audit_log" USING btree ("tenant_id","created_at" DESC NULLS LAST);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_audit_entity" ON "audit_log" USING btree ("entity","entity_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_inquiries_tenant_read_created" ON "inquiries" USING btree ("tenant_id","is_read","created_at" DESC NULLS LAST);--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "uniq_licences_fingerprint" ON "licences" USING btree ("key_fingerprint");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_revisions_tenant_status_created" ON "revisions" USING btree ("tenant_id","status","created_at" DESC NULLS LAST);
