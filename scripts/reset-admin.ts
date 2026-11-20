@@ -10,18 +10,26 @@ import { hashPassword } from '@/infrastructure/auth/password';
  *
  *   NEW_ADMIN_EMAIL=... NEW_ADMIN_PASSWORD=... pnpm admin:reset
  *
+ * On Vercel: set ADMIN_RESET=1 and redeploy; the build resets the admin from
+ * ADMIN_EMAIL / ADMIN_PASSWORD. Remove ADMIN_RESET afterwards, otherwise every deploy
+ * overwrites a password changed from the admin panel.
+ *
  * Targets the admin whose email is CURRENT_ADMIN_EMAIL if given, otherwise the oldest
  * admin account. Credentials come from env so they never land in the repo.
  */
 async function main() {
   const url = process.env.DATABASE_URL;
-  const newEmail = process.env.NEW_ADMIN_EMAIL?.trim().toLowerCase();
-  const newPassword = process.env.NEW_ADMIN_PASSWORD;
+  // Falls back to ADMIN_EMAIL / ADMIN_PASSWORD so a Vercel build can sync the login
+  // from the project's env vars (see ADMIN_RESET in vercel.json).
+  const newEmail = (process.env.NEW_ADMIN_EMAIL ?? process.env.ADMIN_EMAIL)?.trim().toLowerCase();
+  const newPassword = process.env.NEW_ADMIN_PASSWORD ?? process.env.ADMIN_PASSWORD;
   const currentEmail = process.env.CURRENT_ADMIN_EMAIL?.trim().toLowerCase();
 
   if (!url) throw new Error('DATABASE_URL is required');
   if (!newEmail || !newPassword) {
-    throw new Error('NEW_ADMIN_EMAIL and NEW_ADMIN_PASSWORD are required');
+    throw new Error(
+      'NEW_ADMIN_EMAIL/NEW_ADMIN_PASSWORD (or ADMIN_EMAIL/ADMIN_PASSWORD) are required',
+    );
   }
   if (newPassword.length < 8) throw new Error('NEW_ADMIN_PASSWORD must be at least 8 characters');
 
